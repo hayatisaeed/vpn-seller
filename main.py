@@ -49,16 +49,35 @@ cancel_keyboard = [
     ['بازگشت به منوی اصلی']
 ]
 cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
+
+# channel lock (must be joint to channel)
+async def member_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    check_var = context.bot.getChatMember(CHANNEL_ID, user_id)
+    if check_var:
+        return 1
+    else:
+        return 0
+async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    pass
+
 # when the user starts the bot
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     # First, add user data to databases (database_handler)
-    # Then, check if user is joined to channel
+    if not member_check():
+        keyboard = [
+            [InlineKeyboardButton('عضویت در کانال', callback_data=f"https://t.me/{CHANNEL_ID[1:]}")],
+            [InlineKeyboardButton('عضو شدم ✅', callback_data='joined')]
+        ]
+        markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text(f'برای استفاده از خدمات بات باید در کانال ما عضو باشید\n{CHANNEL_ID}', reply_markup=markup)
+        return
     # Then send welcome message
     if str(user_id) != str(ADMIN_ID):
         await update.message.reply_text('Hey there!', reply_markup=main_menu)
     else:
-        await update.message.reply_text('Hello Admin!')
+        await update.message.reply_text('Hello Admin!', reply_markup=admin_main_menu)
 
 #--- Functions ---#
 
@@ -72,6 +91,7 @@ async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 async def get_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     await update.message.reply_text('شما در حال ارسال پیام به پشتیبانی هستید. لطفا متن پیام خود را بنویسید.', reply_markup=cancel_markup)
+
 # instances
 application = Application.builder().token(TOKEN).build()
 

@@ -1,0 +1,9 @@
+{
+    "start_message_id": "",
+    "channel_lock": "",
+    "payment": {
+        "card_number": "",
+        "card_owner": "",
+        "payment_message_id": ""
+    }
+}
