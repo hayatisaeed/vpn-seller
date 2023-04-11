@@ -87,11 +87,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     if not await member_check(update, context):
-        context.bot.answer_callback_query(callback_query_id=query.id, text="شما هنوز عضو نشده اید ❌")
+        await context.bot.answer_callback_query(callback_query_id=query.id, text="شما هنوز عضو نشده اید ❌")
     else:
-        context.bot.answer_callback_query(callback_query_id=query.id, text="عضویت شما تایید شد ✅")
-        context.bot.deleteMessage(chat_id=update.effective_chat.id, message_id=context.chat_data['message_id'])
-        start(update, context)
+        await context.bot.answer_callback_query(callback_query_id=query.id, text="عضویت شما تایید شد ✅")
+        await context.bot.deleteMessage(chat_id=update.effective_chat.id, message_id=context.chat_data['message_id'])
+        await start(update, context)
 
 
 #--- Functions ---#
