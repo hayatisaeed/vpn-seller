@@ -11,8 +11,7 @@ from telegram.ext import (
     ContextTypes,
     ConversationHandler,
     MessageHandler,
-    filters,
-    Filters
+    filters
 )
 from telegram import ChatMember
 import datetime
@@ -138,7 +137,7 @@ def main() -> None:
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
             ENSERAF: MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu),
-            SEND_SUPPORT_MESSAGE: MessageHandler(~Filters.command, send_support_message)
+            SEND_SUPPORT_MESSAGE: MessageHandler(filters.text, send_support_message)
         },
         fallbacks=[]
     )
