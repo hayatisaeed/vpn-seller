@@ -94,9 +94,9 @@ async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         await context.bot.answer_callback_query(callback_query_id=query.id, text="عضویت شما تایید شد ✅")
         await context.bot.deleteMessage(chat_id=update.effective_chat.id, message_id=context.chat_data['message_id'])
         if str(user_id) != str(ADMIN_ID):
-            await update.message.reply_text('Hey there!', reply_markup=main_menu)
+            await context.bot.send_message(chat_id=user_id, text='Hey there!', reply_markup=main_menu)
         else:
-            await update.message.reply_text('Hello Admin!', reply_markup=admin_main_menu)
+            await context.bot.send_message(chat_id=user_id, text='Hello Admin!', reply_markup=admin_main_menu)
 
 
 #--- Functions ---#
