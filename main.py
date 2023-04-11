@@ -54,6 +54,7 @@ cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 def member_check(update, context):
     user_id = update.effective_user.id
     check_var = context.bot.getChatMember(CHANNEL_ID, user_id)
+    print(check_var)
     if check_var:
         return True
     else:
