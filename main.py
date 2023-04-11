@@ -75,7 +75,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             [InlineKeyboardButton('عضو شدم ✅', callback_data='joined')]
         ]
         markup = InlineKeyboardMarkup(keyboard)
-        context.chat_data['message_id'] = message.message_id
+        context.chat_data['message_id'] = update.message.message_id
         await update.message.reply_text(f'برای استفاده از خدمات بات باید در کانال ما عضو باشید\n{CHANNEL_ID}', reply_markup=markup)
         return
     # Then send welcome message
