@@ -125,10 +125,11 @@ def main() -> None:
             
         ]
     )
-    joined_handler = CallbackQueryHandler(joined_check, pattern='^joined$')
+    joined_handler = CallbackQueryHandler(joined_check, pattern="^joined$")
 
     # add handlers to the application
     application.add_handler(start_handler)
+    application.add_handler(joined_handler)
 
     # Start the bot
     application.run_polling()
