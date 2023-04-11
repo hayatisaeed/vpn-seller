@@ -30,6 +30,7 @@ CHANNEL_ID = '@kard_vpn_test' # string, public id
 
 # Constants:
 CHOOSING = range(1)
+ENSERAF, SEND_SUPPORT_MESSAGE = 0, 1
 
 # keyboards:
 main_menu_keyboard = [
@@ -48,7 +49,7 @@ admin_menu_keyboard = [
 admin_main_menu = ReplyKeyboardMarkup(admin_menu_keyboard, one_time_keyboard=True)
 
 cancel_keyboard = [
-    ['بازگشت به منوی اصلی']
+    ['انصراف و بازگشت']
 ]
 cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 
@@ -94,7 +95,7 @@ async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         await context.bot.answer_callback_query(callback_query_id=query.id, text="عضویت شما تایید شد ✅")
         await context.bot.deleteMessage(chat_id=update.effective_chat.id, message_id=context.chat_data['message_id'])
         if str(user_id) != str(ADMIN_ID):
-            await context.bot.send_message(chat_id=user_id, text='Hey there!', reply_markup=main_menu)
+            await context.bot.send_message(chat_id=user_id, text='سلام! به ربات کارد خوش اومدید ☺️ لطفا از بین گزینه های زیر یکی رو انتخاب کنید:', reply_markup=main_menu)
         else:
             await context.bot.send_message(chat_id=user_id, text='Hello Admin!', reply_markup=admin_main_menu)
 
@@ -111,6 +112,19 @@ async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 async def get_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     await update.message.reply_text('شما در حال ارسال پیام به پشتیبانی هستید. لطفا متن پیام خود را بنویسید.', reply_markup=cancel_markup)
+    return SEND_SUPPORT_MESSAGE
+
+async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    markup = InlineKeyboardMarkup(main_menu_keyboard)
+    buttons = [
+        [InlineKeyboardButton('پاسخ به این کاربر', callback_data=f"reply_to_user {user_id}")],
+        [InlineKeyboardButton('مدیریت این کاربر', callback_data=f'admin_user_panel {user_id}')]
+    ]
+    admin_markup = InlineKeyboardMarkup(markup)
+    await context.bot.copy_message(from_chat_id=user_id, chat_id=ADMIN_ID, message_id=update.message.message_id, reply_markup=admin_markup)
+    await update.message.reply_text('پیام با موفقیت ارسال شد.', reply_markup=main_menu)
+
 
 # instances
 application = Application.builder().token(TOKEN).build()
@@ -118,22 +132,17 @@ bot = bot = telegram.Bot(token=TOKEN)
 
 def main() -> None:
     # Command & Conversation & CallbackQuery Handlers will take place here.
-    start_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
-        states={
-            CHOOSING: [
-                MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)
-                # MessageHandler(filters.Regex('^بازگشت به منوی اصلی$'), back_to_main_menu)
-            ]
-        },
-        fallbacks=[
-            
-        ]
-    )
     joined_handler = CallbackQueryHandler(joined_check, pattern="^joined$")
+    send_support_message_conv_handler = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
+        states={
+            ENSERAF: MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu),
+            SEND_SUPPORT_MESSAGE: MessageHandler(send_support_message)
+        },
+        fallbacks=[]
+    )
 
     # add handlers to the application
-    application.add_handler(start_handler)
     application.add_handler(joined_handler)
 
     # Start the bot
