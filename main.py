@@ -54,7 +54,7 @@ cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 # channel lock (must be joint to channel)
 async def member_check(update, context):
     user_id = update.effective_user.id
-    chat_member = await context.bot.get_chat_members_count(CHANNEL_ID, user_id)
+    chat_member = await context.bot.get_chat_member(CHANNEL_ID, user_id)
     print(chat_member)
     if chat_member.status == ChatMember.MEMBER or chat_member.status == ChatMember.ADMINISTRATOR or chat_member.status == ChatMember.CREATOR:
         return True
