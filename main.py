@@ -12,6 +12,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from telegram import ChatMember
 import datetime
 
 # Enable logging
@@ -51,11 +52,11 @@ cancel_keyboard = [
 cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 
 # channel lock (must be joint to channel)
-async def member_check(update, bot):
+async def member_check(update, context):
     user_id = update.effective_user.id
-    chat_member = await bot.get_chat_members_count(CHANNEL_ID)
+    chat_member = await context.bot.get_chat_members_count(CHANNEL_ID, user_id)
     print(chat_member)
-    if user_id in chat_member:
+    if chat_member.status == ChatMember.MEMBER or chat_member.status == ChatMember.ADMINISTRATOR or chat_member.status == ChatMember.CREATOR:
         return True
     else:
         return False
