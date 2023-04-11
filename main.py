@@ -51,7 +51,7 @@ cancel_keyboard = [
 cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 
 # channel lock (must be joint to channel)
-def member_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+def member_check(update, context)
     user_id = update.effective_user.id
     check_var = context.bot.getChatMember(CHANNEL_ID, user_id)
     if check_var:
@@ -65,7 +65,7 @@ async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     # First, add user data to databases (database_handler)
-    if not member_check(update=update, context=context):
+    if not member_check(update, context):
         keyboard = [
             [InlineKeyboardButton('عضویت در کانال', callback_data=f"https://t.me/{CHANNEL_ID[1:]}")],
             [InlineKeyboardButton('عضو شدم ✅', callback_data='joined')]
