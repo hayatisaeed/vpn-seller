@@ -24,7 +24,7 @@ def check_subscription(bot, update):
 
   
 # Create an Updater object and attach dispatcher to it 
-updater = Updater('TOKEN')   # Replace 'TOKEN' with your bot token  
+updater = Updater('6126767405:AAH4B-wx0ckT6NoMPp6pA3lGoGAU-DxEC9Q')   # Replace 'TOKEN' with your bot token  
 dispatcher = updater.dispatcher  
 
  # Add command handler to dispatcher  
