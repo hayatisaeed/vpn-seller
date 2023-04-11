@@ -56,9 +56,12 @@ async def member_check(update, context):
     user_id = update.effective_user.id
     chat_member = await context.bot.get_chat_member(CHANNEL_ID, user_id)
     print(chat_member)
-    if chat_member.status == ChatMember.MEMBER or chat_member.status == ChatMember.ADMINISTRATOR or chat_member.status == ChatMember.CREATOR:
-        return True
-    else:
+    try:
+        if chat_member.status == ChatMember.MEMBER or chat_member.status == ChatMember.ADMINISTRATOR or chat_member.status == ChatMember.CREATOR:
+            return True
+        else:
+            return False
+    except:
         return False
 async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     pass
