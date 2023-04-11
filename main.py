@@ -137,7 +137,7 @@ def main() -> None:
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
             ENSERAF: MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu),
-            SEND_SUPPORT_MESSAGE: MessageHandler(~filters.Command, send_support_message)
+            SEND_SUPPORT_MESSAGE: MessageHandler(filters.Regex('^'), send_support_message)
         },
         fallbacks=[]
     )
