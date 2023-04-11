@@ -51,7 +51,7 @@ cancel_keyboard = [
 cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 
 # channel lock (must be joint to channel)
-def member_check(update, context)
+def member_check(update, context):
     user_id = update.effective_user.id
     check_var = context.bot.getChatMember(CHANNEL_ID, user_id)
     if check_var:
