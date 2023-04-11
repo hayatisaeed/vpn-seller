@@ -7,6 +7,7 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import (
     Application,
     CommandHandler,
+    CallbackQueryHandler,
     ContextTypes,
     ConversationHandler,
     MessageHandler,
@@ -62,8 +63,7 @@ async def member_check(update, context):
             return False
     except:
         return False
-async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    pass
+
 
 # when the user starts the bot
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -82,6 +82,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await update.message.reply_text('Hey there!', reply_markup=main_menu)
     else:
         await update.message.reply_text('Hello Admin!', reply_markup=admin_main_menu)
+
+# when the user clicks on 'عضو شدم' button
+async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    if not await member_check(update, context):
+        context.bot.answer_callback_query(callback_query_id=query.id, text="شما هنوز عضو نشده اید ❌")
+    else:
+        context.bot.answer_callback_query(callback_query_id=query.id, text="عضویت شما تایید شد ✅")
+        context.bot.deleteMessage(chat_id=update.effective_chat.id, message_id=context.chat_data['message_id'])
+        start(update, context)
+
 
 #--- Functions ---#
 
@@ -114,6 +125,7 @@ def main() -> None:
             
         ]
     )
+    joined_handler = CallbackQueryHandler(joined_check, pattern='^joined$')
 
     # add handlers to the application
     application.add_handler(start_handler)
