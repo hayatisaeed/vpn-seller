@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 # replace with your own
 TOKEN = "6126767405:AAH4B-wx0ckT6NoMPp6pA3lGoGAU-DxEC9Q" # 6126767405:AAH4B-wx0ckT6NoMPp6pA3lGoGAU-DxEC9Q
 ADMIN_ID = 1767064220 # integer
-CHANNEL_ID = '@kard_vpn' # string, public id
+CHANNEL_ID = '@kard_vpn_test' # string, public id
 
 # Constants:
 CHOOSING = range(1)
