@@ -66,7 +66,7 @@ async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     # First, add user data to databases (database_handler)
-    if not member_check(update, context):
+    if not await member_check(update, context):
         keyboard = [
             [InlineKeyboardButton('عضویت در کانال', callback_data=f"https://t.me/{CHANNEL_ID[1:]}")],
             [InlineKeyboardButton('عضو شدم ✅', callback_data='joined')]
