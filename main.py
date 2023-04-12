@@ -101,6 +101,9 @@ async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
 
 #--- Functions ---#
+async def show_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    await update.message.reply_text('اطلاعات اکانت شما به شرح زیر است:\nاطلاع ۱\nاطلاع ۲\n...')
 
 async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
@@ -142,8 +145,11 @@ def main() -> None:
         fallbacks=[]
     )
 
+    show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
+
     # add handlers to the application
     application.add_handler(joined_handler)
+    application.add_handler(show_info_message_handler)
 
     # Start the bot
     application.run_polling()
