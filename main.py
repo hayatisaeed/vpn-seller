@@ -58,6 +58,7 @@ async def member_check(update, context):
     user_id = update.effective_user.id
     try:
         chat_member = await context.bot.get_chat_member(CHANNEL_ID, user_id)
+        print(chat_member) #check
         if chat_member.status == ChatMember.MEMBER or chat_member.status == ChatMember.ADMINISTRATOR or chat_member.status == ChatMember.CREATOR or chat_member.status == ChatMember.Owner:
             return True
         else:
