@@ -139,10 +139,9 @@ def main() -> None:
     send_support_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
-            ENSERAF: MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu),
             SEND_SUPPORT_MESSAGE: MessageHandler(filters.text, send_support_message)
         },
-        fallbacks=[]
+        fallbacks=[MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu)]
     )
 
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
