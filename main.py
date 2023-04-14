@@ -151,6 +151,7 @@ def main() -> None:
     application.add_handler(start_handler)
     application.add_handler(joined_handler)
     application.add_handler(show_info_message_handler)
+    application.add_handler(send_support_message_conv_handler)
 
     # Start the bot
     application.run_polling()
