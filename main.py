@@ -65,6 +65,7 @@ async def member_check(update, context):
             print('alaki\n\n\n\n') #check
             return False
     except:
+        print('in except, there is a problem out there\n\n\n\n\n\n\n\n\n\n')
         return False
 
 
