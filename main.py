@@ -148,6 +148,7 @@ def main() -> None:
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
 
     # add handlers to the application
+    application.add_handler(start_handler)
     application.add_handler(joined_handler)
     application.add_handler(show_info_message_handler)
 
