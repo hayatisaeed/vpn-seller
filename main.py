@@ -135,6 +135,7 @@ bot = bot = telegram.Bot(token=TOKEN)
 
 def main() -> None:
     # Command & Conversation & CallbackQuery Handlers will take place here.
+    start_handler = CommandHandler('start', start)
     joined_handler = CallbackQueryHandler(joined_check, pattern="^joined$")
     send_support_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
