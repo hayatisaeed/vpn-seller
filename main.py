@@ -109,8 +109,10 @@ async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     user_id = update.effective_user.id
     if str(user_id) != str(ADMIN_ID):
         await update.message.reply_text('به منوی اصلی بازگشتید.', reply_markup=main_menu)
+        return ConversationHandler.END
     else:
         await update.message.reply_text('بازگشت به منوی اصلی ادمین', reply_markup=admin_main_menu)
+        return ConversationHandler.END
 
 async def get_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
