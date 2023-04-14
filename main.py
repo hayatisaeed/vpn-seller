@@ -56,22 +56,14 @@ cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 # channel lock (must be joint to channel)
 async def member_check(update, context):
     user_id = update.effective_user.id
-    # start check
-    chat_member = await context.bot.get_chat_member(CHANNEL_ID, user_id)
-    if chat_member.status == ChatMember.MEMBER or chat_member.status == ChatMember.ADMINISTRATOR or chat_member.status == ChatMember.OWNER:
-        return True
-    else:
-        return False
-    """
     try:
         chat_member = await context.bot.get_chat_member(CHANNEL_ID, user_id)
-        if chat_member.status == ChatMember.MEMBER or chat_member.status == ChatMember.ADMINISTRATOR or chat_member.status == ChatMember.CREATOR:
+        if chat_member.status == ChatMember.MEMBER or chat_member.status == ChatMember.ADMINISTRATOR or chat_member.status == ChatMember.OWNER:
             return True
         else:
             return False
     except:
         return False
-    """
 
 
 # when the user starts the bot
