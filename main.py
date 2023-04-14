@@ -30,7 +30,7 @@ CHANNEL_ID = '@kard_vpn_test' # string, public id
 
 # Constants:
 CHOOSING = range(1)
-ENSERAF, SEND_SUPPORT_MESSAGE = 0, 1
+SEND_SUPPORT_MESSAGE = 0
 
 # keyboards:
 main_menu_keyboard = [
