@@ -61,6 +61,7 @@ async def member_check(update, context):
         if chat_member.status == ChatMember.MEMBER or chat_member.status == ChatMember.ADMINISTRATOR or chat_member.status == ChatMember.CREATOR:
             return True
         else:
+            print(ChatMember.status) # check
             return False
     except:
         return False
