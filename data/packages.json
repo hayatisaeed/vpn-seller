@@ -1,0 +1,7 @@
+{
+    "packages_id": {
+        "package_name": "some name",
+        "package_operator": "operator",
+        "package_price": 100000
+    }
+}
