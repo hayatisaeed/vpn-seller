@@ -121,7 +121,7 @@ async def get_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    markup = InlineKeyboardMarkup(main_menu_keyboard)
+    markup = ReplyKeyboardMarkup(main_menu_keyboard)
     buttons = [
         [InlineKeyboardButton('پاسخ به این کاربر', callback_data=f"reply_to_user {user_id}")],
         [InlineKeyboardButton('مدیریت این کاربر', callback_data=f'admin_user_panel {user_id}')]
