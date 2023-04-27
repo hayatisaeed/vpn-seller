@@ -103,7 +103,7 @@ async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 #--- Functions ---#
 async def show_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    await update.message.reply_text('اطلاعات اکانت شما به شرح زیر است:\nاطلاع ۱\nاطلاع ۲\n...')
+    await update.message.reply_text('اطلاعات اکانت شما به شرح زیر است:\nاطلاع ۱\nاطلاع ۲\n...', reply_markup=main_menu)
 
 async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
@@ -142,7 +142,7 @@ def main() -> None:
     send_support_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
-            SEND_SUPPORT_MESSAGE: [MessageHandler(filters.Text, send_support_message)]
+            SEND_SUPPORT_MESSAGE: [MessageHandler(filters.TEXT, send_support_message)]
         },
         fallbacks=[MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu)]
     )
