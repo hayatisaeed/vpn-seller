@@ -126,7 +126,7 @@ async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYP
         [InlineKeyboardButton('پاسخ به این کاربر', callback_data=f"reply_to_user {user_id}")],
         [InlineKeyboardButton('مدیریت این کاربر', callback_data=f'admin_user_panel {user_id}')]
     ]
-    admin_markup = markup
+    admin_markup = InlineKeyboardMarkup(buttons)
     await context.bot.copy_message(from_chat_id=user_id, chat_id=ADMIN_ID, message_id=update.message.message_id, reply_markup=admin_markup)
     await update.message.reply_text('پیام با موفقیت ارسال شد.', reply_markup=main_menu)
 
@@ -142,7 +142,7 @@ def main() -> None:
     send_support_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
-            SEND_SUPPORT_MESSAGE: [MessageHandler(filters.TEXT, send_support_message)]
+            SEND_SUPPORT_MESSAGE: [MessageHandler(filters.TEXT & ~filters.Regex('^انصراف و بازگشت$'), send_support_message)]
         },
         fallbacks=[MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu)]
     )
