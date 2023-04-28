@@ -142,6 +142,7 @@ async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYP
         await update.message.reply_text('پیام با موفقیت ارسال شد.', reply_markup=main_menu)
         return ConversationHandler.END
     await update.message.reply_text('🚫 پیام ارسال نشد. لطفا متن یا تصویر ارسال بفرمایید.', reply_markup=main_menu)
+    return ConversationHandler.END
     
 
 async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
