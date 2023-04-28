@@ -136,7 +136,7 @@ async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYP
         await context.bot.send_photo(chat_id=ADMIN_ID, photo=photo_file_id, caption=f"یک پیام جدید از کاربر {user_id}:\n\n\nمتن پیام:\n{caption}", reply_markup=admin_markup)
         await update.message.reply_text('پیام با موفقیت ارسال شد.', reply_markup=main_menu)
         return ConversationHandler.END
-    else:
+    elif update.message.text:
         txt = update.message.text
         await context.bot.send_message(chat_id=ADMIN_ID, text=f"یک پیام جدید از کاربر {user_id}:\n\n\nمتن پیام:\n{txt}", reply_markup=admin_markup)
         await update.message.reply_text('پیام با موفقیت ارسال شد.', reply_markup=main_menu)
