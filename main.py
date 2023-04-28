@@ -123,13 +123,18 @@ async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYP
     user_id = update.effective_user.id
     markup = ReplyKeyboardMarkup(main_menu_keyboard)
     buttons = [
-        [InlineKeyboardButton('پاسخ به این کاربر', callback_data=f"reply_to_user {user_id}")],
-        [InlineKeyboardButton('مدیریت این کاربر', callback_data=f'admin_user_panel {user_id}')]
+        [InlineKeyboardButton('پاسخ', callback_data=f"reply_to_user {user_id}")],
+        [InlineKeyboardButton('مدیریت کاربر', callback_data=f'admin_user_panel {user_id}')]
     ]
     admin_markup = InlineKeyboardMarkup(buttons)
     await context.bot.copy_message(from_chat_id=user_id, chat_id=ADMIN_ID, message_id=update.message.message_id, reply_markup=admin_markup)
     await update.message.reply_text('پیام با موفقیت ارسال شد.', reply_markup=main_menu)
 
+async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    pass
+
+async def reply_to_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    pass
 
 # instances
 application = Application.builder().token(TOKEN).build()
@@ -142,12 +147,14 @@ def main() -> None:
     send_support_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
-            SEND_SUPPORT_MESSAGE: [MessageHandler(filters.TEXT & ~filters.Regex('^انصراف و بازگشت$'), send_support_message)]
+            SEND_SUPPORT_MESSAGE: [MessageHandler(filters.PHOTO & filters.TEXT & ~filters.Regex('^انصراف و بازگشت$'), send_support_message)]
         },
         fallbacks=[MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu)]
     )
 
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
+
+    # reply_to_user_handler = CallbackQueryHandler(reply_to_user, )
 
     # add handlers to the application
     application.add_handler(start_handler)
