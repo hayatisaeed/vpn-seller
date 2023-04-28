@@ -53,6 +53,12 @@ cancel_keyboard = [
 ]
 cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 
+
+
+
+
+
+
 # channel lock (must be joint to channel)
 async def member_check(update, context):
     user_id = update.effective_user.id
@@ -64,6 +70,13 @@ async def member_check(update, context):
             return False
     except:
         return False
+
+
+
+
+
+
+
 
 
 # when the user starts the bot
@@ -98,6 +111,12 @@ async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
             await context.bot.send_message(chat_id=user_id, text='سلام! به ربات کارد خوش اومدید ☺️ لطفا از بین گزینه های زیر یکی رو انتخاب کنید:', reply_markup=main_menu)
         else:
             await context.bot.send_message(chat_id=user_id, text='Hello Admin!', reply_markup=admin_main_menu)
+
+
+
+
+
+
 
 
 #--- Functions ---#
@@ -143,13 +162,93 @@ async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYP
         return ConversationHandler.END
     await update.message.reply_text('🚫 پیام ارسال نشد. لطفا متن یا تصویر ارسال بفرمایید.', reply_markup=main_menu)
     return ConversationHandler.END
-    
+
+async def user_charge_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    user_credit = 10 # update by db
+    keyboard = [
+        ['20000', '30000', '40000', '50000'],
+        ['60000', '70000', '80000', '90000'],
+        ['100000', '200000', '500000'],
+        ['1000000', '2000000'],
+        ['انصراف و بازگشت']
+    ]
+    markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
+    await context.bot.send_message(chat_id=user_id, text=f"شما {user_credit} تومن توی حسابت داری. مقدار مدنظرت برای شارژ کردن رو از منوی پایین انتخاب کن یا عدد مدنظرت رو به لاتین وارد کن (همه‌ی اعداد به تومن هستن):", reply_markup=markup)
+    return 'PRICE'
+async def charge_get_price(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    price = update.message.text
+    try:
+        price = int(price)
+    except:
+        keyboard = [
+            ['20000', '30000', '40000', '50000'],
+            ['60000', '70000', '80000', '90000'],
+            ['100000', '200000', '500000'],
+            ['1000000', '2000000'],
+            ['انصراف و بازگشت']
+        ]
+        markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
+        await context.bot.send_message(chat_id=user_id, text='فقط عدد لاتین بفرست.', reply_markup=markup)
+        return 'PRICE'
+    context.user_data['charge_price'] = price
+    card_number = 1234123412341234 # update by db
+    card_owner = 'OWNER OF CARD' # update by db
+    keyboard = [
+        ['انصراف و بازگشت']
+    ]
+    markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
+    await context.bot.send_message(chat_id=user_id, text=f"حله. مبلغ {price} پس از واریز به کیف پول شما افزوده خواهد شد.\n\nلطفا {price} تومن به شماره کارت زیر واریز کرده و رسیدش رو به صورت تصویر یا متن برای بات بفرستید:\n🔰 شماره کارت: {card_number}\nبه نام: {card_owner}", reply_markup=markup)
+    return 'RESID'
+async def charge_get_resid(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    markup = ReplyKeyboardMarkup(main_menu_keyboard)
+    buttons = [
+        [InlineKeyboardButton('تایید ✅', callback_data=f"ok {user_id}"), InlineKeyboardButton('رد تراکنش ❌', callback_data=f'no {user_id}')],
+        [InlineKeyboardButton('پیام', callback_data=f"reply_to_user {user_id}"), InlineKeyboardButton('مدیریت کاربر', callback_data=f'admin_user_panel {user_id}')],
+        [InlineKeyboardButton('🔴مسدود کردن کاربر', callback_data=f"block_user {user_id}")]
+    ]
+    admin_markup = InlineKeyboardMarkup(buttons)
+    if update.message.photo:
+        photo_file_id = update.message.photo[-1].file_id
+        if update.message.caption:
+            caption = update.message.caption
+        else:
+            caption = 'بدون توضیحات'
+        await context.bot.send_photo(chat_id=ADMIN_ID, photo=photo_file_id, caption=f"🤑💲 دریافتی جدید از کاربر {user_id}:\n\n\nمتن رسید:\n{caption}", reply_markup=admin_markup)
+        await update.message.reply_text('✅درخواست افزایش موجودی ارسال شد. بلافاصله پس از تایید ادمین موجودی شما افزایش خواهد یافت.', reply_markup=main_menu)
+        # update with db: add waiting amount
+        return ConversationHandler.END
+    elif update.message.text:
+        txt = update.message.text
+        await context.bot.send_message(chat_id=ADMIN_ID, text=f"🤑💲 دریافتی جدید از کاربر {user_id}:\n\n\nمتن رسید:\n{txt}", reply_markup=admin_markup)
+        await update.message.reply_text('✅درخواست افزایش موجودی ارسال شد. بلافاصله پس از تایید ادمین موجودی شما افزایش خواهد یافت.', reply_markup=main_menu)
+        # update with db: add waiting amount
+        return ConversationHandler.END
+    await update.message.reply_text('🚫 رسید ارسال نشد. لطفا متن یا تصویر ارسال بفرمایید.', reply_markup=main_menu)
+    return ConversationHandler.END
+
+
+
+#--- ADMIN ---#
+async def brodcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    pass
 
 async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     pass
 
 async def reply_to_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     pass
+
+
+
+
+
+
+
+
+
 
 # instances
 application = Application.builder().token(TOKEN).build()
@@ -158,11 +257,22 @@ bot = bot = telegram.Bot(token=TOKEN)
 def main() -> None:
     # Command & Conversation & CallbackQuery Handlers will take place here.
     start_handler = CommandHandler('start', start)
+
     joined_handler = CallbackQueryHandler(joined_check, pattern="^joined$")
+
     send_support_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
             SEND_SUPPORT_MESSAGE: [MessageHandler(filters.ALL & ~filters.Regex('^انصراف و بازگشت$'), send_support_message)]
+        },
+        fallbacks=[MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu)]
+    )
+
+    charge_wallet_conv_handler = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex('^➕ افزایش موجودی$'), user_charge_wallet)],
+        states={
+            'PRICE': [MessageHandler(~filters.Regex('^انصراف و بازگشت$') & filters.TEXT, charge_get_price)],
+            'RESID':[MessageHandler(~filters.Regex('^انصراف و بازگشت$') & filters.ALL, charge_get_resid)]
         },
         fallbacks=[MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu)]
     )
@@ -176,6 +286,7 @@ def main() -> None:
     application.add_handler(joined_handler)
     application.add_handler(show_info_message_handler)
     application.add_handler(send_support_message_conv_handler)
+    application.add_handler(charge_wallet_conv_handler)
 
     # Start the bot
     application.run_polling()

@@ -2,6 +2,8 @@
     "user_id": {
         "is_hamkar": 0,
         "percent": 100,
+        "credit": 0,
+        "waiting_amount": 0,
         "accepted_rules": 1
     },
     "number_of_users": 0
