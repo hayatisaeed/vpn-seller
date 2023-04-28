@@ -127,9 +127,9 @@ async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYP
         [InlineKeyboardButton('🔴مسدود کردن کاربر', callback_data=f"block_user {user_id}")]
     ]
     admin_markup = InlineKeyboardMarkup(buttons)
-    if update.message.photo != Null:
+    if update.message.photo:
         photo_file_id = update.message.photo[-1].file_id
-        if update.message.caption != Null:
+        if update.message.caption:
             caption = update.message.caption
         else:
             caption = 'بدون توضیحات'
