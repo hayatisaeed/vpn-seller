@@ -116,7 +116,7 @@ async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
 async def get_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    await update.message.reply_text('شما در حال ارسال پیام به پشتیبانی هستید. لطفا متن پیام خود را بنویسید.', reply_markup=cancel_markup)
+    await update.message.reply_text('شما در حال ارسال پیام به پشتیبانی هستید. لطفا متن پیام خود را بنویسید. \n', reply_markup=cancel_markup)
     return SEND_SUPPORT_MESSAGE
 
 async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -133,12 +133,16 @@ async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYP
             caption = update.message.caption
         else:
             caption = 'بدون توضیحات'
-        await context.bot.send_photo(chat_id=ADMIN_ID, photo=photo_file_id, caption=f"یک پیام جدید از کاربر {user_id}:\n\n\nمتن پیام:\n{caption}")
+        await context.bot.send_photo(chat_id=ADMIN_ID, photo=photo_file_id, caption=f"یک پیام جدید از کاربر {user_id}:\n\n\nمتن پیام:\n{caption}", reply_markup=admin_markup)
+        await update.message.reply_text('پیام با موفقیت ارسال شد.', reply_markup=main_menu)
+        return ConversationHandler.END
     else:
         txt = update.message.text
         await context.bot.send_message(chat_id=ADMIN_ID, text=f"یک پیام جدید از کاربر {user_id}:\n\n\nمتن پیام:\n{txt}", reply_markup=admin_markup)
-        # await context.bot.copy_message(from_chat_id=user_id, chat_id=ADMIN_ID, message_id=update.message.message_id, reply_markup=admin_markup)
-    await update.message.reply_text('پیام با موفقیت ارسال شد.', reply_markup=main_menu)
+        await update.message.reply_text('پیام با موفقیت ارسال شد.', reply_markup=main_menu)
+        return ConversationHandler.END
+    await update.message.reply_text('🚫 پیام ارسال نشد. لطفا متن یا تصویر ارسال بفرمایید.', reply_markup=main_menu)
+    
 
 async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     pass
