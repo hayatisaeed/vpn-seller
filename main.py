@@ -123,11 +123,21 @@ async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYP
     user_id = update.effective_user.id
     markup = ReplyKeyboardMarkup(main_menu_keyboard)
     buttons = [
-        [InlineKeyboardButton('پاسخ', callback_data=f"reply_to_user {user_id}")],
-        [InlineKeyboardButton('مدیریت کاربر', callback_data=f'admin_user_panel {user_id}')]
+        [InlineKeyboardButton('پاسخ', callback_data=f"reply_to_user {user_id}"), InlineKeyboardButton('مدیریت کاربر', callback_data=f'admin_user_panel {user_id}')],
+        [InlineKeyboardButton('🔴مسدود کردن کاربر', callback_data=f"block_user {user_id}")]
     ]
     admin_markup = InlineKeyboardMarkup(buttons)
-    await context.bot.copy_message(from_chat_id=user_id, chat_id=ADMIN_ID, message_id=update.message.message_id, reply_markup=admin_markup)
+    if update.message.photo != Null:
+        photo_file_id = update.message.photo[-1].file_id
+        if update.message.caption != Null:
+            caption = update.message.caption
+        else:
+            caption = 'بدون توضیحات'
+        await context.bot.send_photo(chat_id=ADMIN_ID, photo=photo_file_id, caption=f"یک پیام جدید از کاربر {user_id}:\n\n\nمتن پیام:\n{caption}")
+    else:
+        txt = update.message.text
+        await context.bot.send_message(chat_id=ADMIN_ID, text=f"یک پیام جدید از کاربر {user_id}:\n\n\nمتن پیام:\n{txt}", reply_markup=admin_markup)
+        # await context.bot.copy_message(from_chat_id=user_id, chat_id=ADMIN_ID, message_id=update.message.message_id, reply_markup=admin_markup)
     await update.message.reply_text('پیام با موفقیت ارسال شد.', reply_markup=main_menu)
 
 async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
