@@ -8,7 +8,7 @@ A python telegram bot to sell v2ray vpn accounts.
 ADMIN sends configs to the bot, and bot sells them.
 
 ## ADMIN Panel:
-* brodcast messages (send a message to all users)
+* brodcast messages (send a message to all users) -> can be sent to: only hamkars, only blocked, all users, normal users
 * send message to a user
 * statistics (number of users, number of sells, summation of sell)
 * add, remove and edit plans (categories)
@@ -23,7 +23,7 @@ ADMIN sends configs to the bot, and bot sells them.
 * channel lock (has to be joined to specified channel before using the bot) ✅
 * visit packages (categories)
 * buy config
-* wallet and charging it
+* wallet and charging it ✅
 * get test
 * information of account (my configs, my id, etc)
 * help

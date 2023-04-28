@@ -4,7 +4,8 @@
         "percent": 100,
         "credit": 0,
         "waiting_amount": 0,
-        "accepted_rules": 1
+        "accepted_rules": 1,
+        "is_blocked": 0
     },
     "number_of_users": 0
 }

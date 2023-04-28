@@ -199,7 +199,7 @@ async def charge_get_price(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         ['انصراف و بازگشت']
     ]
     markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
-    await context.bot.send_message(chat_id=user_id, text=f"حله. مبلغ {price} پس از واریز به کیف پول شما افزوده خواهد شد.\n\nلطفا {price} تومن به شماره کارت زیر واریز کرده و رسیدش رو به صورت تصویر یا متن برای بات بفرستید:\n🔰 شماره کارت: {card_number}\nبه نام: {card_owner}", reply_markup=markup)
+    await context.bot.send_message(chat_id=user_id, text=f"👍حله. مبلغ {price} پس از واریز به کیف پول شما افزوده خواهد شد.\n\n\nلطفا {price} تومن به شماره کارت زیر واریز کرده و رسیدش رو به صورت تصویر یا متن برای بات بفرستید:\n\n\n🔰 شماره کارت: {card_number}\nبه نام: {card_owner}\n\n.", reply_markup=markup)
     return 'RESID'
 async def charge_get_resid(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
