@@ -253,6 +253,7 @@ async def show_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     for i in packages_data:
         # buttons.append([InlineKeyboardButton(i, callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_name'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_operator'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_description'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_price'], callback_data=f"none"), InlineKeyboardButton('خرید', callback_data=f"buy {i}")])
         buttons.append([InlineKeyboardButton(packages_data[i]['package_name'], callback_data=f"buy {i}")])
+    buttons.append([InlineKeyboardButton('🔙 بازگشت', callback_data=f"main_menu")])
     inline_markup = InlineKeyboardMarkup(buttons)
     await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=[inline_markup, main_menu])
 
