@@ -21,32 +21,6 @@ def newUser(user_id = 0, is_hamkar = 0, percent = 100, credit = 0, accepted_rule
     return 1
 
     
-
-
-class newUser:
-    def __init__(self, user_id = 0, is_hamkar = 0, percent = 100, credit = 0, accepted_rules = 1, is_blocked = 0, user_name = "none", inviter = 0, number_of_invited = 0):
-
-        self.user_id = user_id
-        self.user_name = user_name
-        self.is_hamkar = is_hamkar
-        self.percent = percent
-        self.credit = credit
-        self.blocked = is_blocked
-        self.inviter = inviter
-        self.subset_number = number_of_invited
-
-        return None
-
-
-class userInfo:
-    def __init__(self, user_id):
-        try:
-            with open('data/users.json', 'r') as f:
-                data = json.load(f)
-                return data[str(user_id)]
-        except:
-            return 0
-
 def payment(uid, pid, price, status = "waiting"):
     with open('data/payments.json', 'w') as f:
         pass
