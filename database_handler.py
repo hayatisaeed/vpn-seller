@@ -26,7 +26,7 @@ def newPayment(user_id, payment_id, price, status = "waiting"):
         with open('data/payments.json', 'r') as f:
             temp = json.loads(f)[str(user_id)]
     except:
-        with open('data/patments.json', 'r') as f:
+        with open('data/payments.json', 'r') as f:
             temp = json.loads(f)
         temp[str(user_id)] = {}
     
