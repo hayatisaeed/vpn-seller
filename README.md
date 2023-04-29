@@ -23,7 +23,8 @@ ADMIN sends configs to the bot, and bot sells them.
 
 ## USER Panel:
 * channel lock (has to be joined to specified channel before using the bot) ✅
-* visit packages (categories)
+* visit packages (categories) ✅
+* visit each plans information
 * buy config
 * wallet and charging it ✅
 * get test
