@@ -21,9 +21,28 @@ def newUser(user_id = 0, is_hamkar = 0, percent = 100, credit = 0, accepted_rule
     return 1
 
     
-def payment(uid, pid, price, status = "waiting"):
-    with open('data/payments.json', 'w') as f:
+def payments(user_id, payment_id, price, status = "waiting"):
+    try:
+        with open('data/payments.json', 'r') as f:
+            temp = json.loads(f)[str(user_id)]
+    except:
+        with open('data/patments.json', 'r') as f:
+            temp = json.loads(f)
+        temp[str(user_id)] = {}
+    
+    try:
+        with open('data/payments.json', 'r') as f:
+            temp = json.loads(f)
+        temp = temp[str(user_id)][str(payment_id)]
+        return 0
+    except:
         pass
+
+    with open('data/payments.json', 'r') as f:
+        data = json.load(f)
+    data[str(user_id)][str(payment_id)] = {"status": status, "price": price}
+    with open('data/payments.json', 'w') as f:
+        json.dump(data, f)
 
 def configs():
     pass
