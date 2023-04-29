@@ -83,8 +83,6 @@ async def member_check(update, context):
 # when the user starts the bot
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    print(database_handler.userInfo.new_user(user_id))
-    print(database_handler.userInfo(user_id).credit)
     if not await member_check(update, context):
         keyboard = [
             [InlineKeyboardButton('عضویت در کانال', url=f"https://t.me/{CHANNEL_ID[1:]}")],
@@ -94,11 +92,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         msg = await update.message.reply_text(f'برای استفاده از خدمات بات باید در کانال ما عضو باشید\n{CHANNEL_ID}', reply_markup=markup)
         context.chat_data['message_id'] = msg.message_id
         return
-    # Then send welcome message
-    if str(user_id) != str(ADMIN_ID):
-        await update.message.reply_text('Hey there!', reply_markup=main_menu)
+    
+    if database_handler.newUser(user_id):
+        await context.bot.send_message(chat_id=user_id, text="سلام! به فروشگاه ما خوش اومدید! میتونید با استفاده از گزینه های زیر از امکانات بات استفاده کنید:", reply_markup=(main_menu if user_id != ADMIN_ID else admin_main_menu))
     else:
-        await update.message.reply_text('Hello Admin!', reply_markup=admin_main_menu)
+        await context.bot.send_message(chat_id=user_id, text="بات راه اندازی مجدد شد. منوی اصلی:", reply_markup=(main_menu if user_id != ADMIN_ID else admin_main_menu))
+    
+    return ConversationHandler.END
 
 # when the user clicks on 'عضو شدم' button
 async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
