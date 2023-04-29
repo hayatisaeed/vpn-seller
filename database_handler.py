@@ -10,7 +10,7 @@ class newUser:
             with open('data/users.json', 'r') as f:
                 data = json.load(f)
                 temp = data[str(user_id)]['percent']
-                return 0
+            return 0
         except:
             pass
 
@@ -22,11 +22,12 @@ class newUser:
         self.blocked = is_blocked
         self.inviter = inviter
         self.subset_number = number_of_invited
+
         with open('data/users.json', 'w+') as f:
             data = json.load(f)
             data[str(self.user_id)] = {"is_hamkar": self.is_hamkar, "percent": self.percent, "credit": self.credit, "accepted_rules": 1, "is_blocked": self.blocked, "username": self.user_name, "inviter": self.inviter, "number_of_invited": self.subset_number}
             json.dump(data, f)
-            return 1
+        return 1
 
 
 class userInfo:
