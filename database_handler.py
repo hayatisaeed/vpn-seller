@@ -29,6 +29,8 @@ def newPayment(user_id, payment_id, price, status = "waiting"):
         with open('data/payments.json', 'r') as f:
             temp = json.loads(f)
         temp[str(user_id)] = {}
+        with open('data/payments.json', 'w') as f:
+            json.dump(temp, f)
     
     try:
         with open('data/payments.json', 'r') as f:
