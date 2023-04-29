@@ -101,7 +101,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
                 [InlineKeyboardButton('🔴مسدود کردن کاربر', callback_data=f"block_user {user_id}")]
             ]
             admin_markup = InlineKeyboardMarkup(buttons)
-            await context.bot.send_message(chat_id=ADMIN_ID, text="یک نوگل جدید باتو استارت کرد. \n آیدی عددیش: {user_id}", reply_markup=admin_markup)
+            await context.bot.send_message(chat_id=ADMIN_ID, text=f"یک نوگل جدید باتو استارت کرد. \n آیدی عددیش: {user_id}", reply_markup=admin_markup)
     else:
         await context.bot.send_message(chat_id=user_id, text="بات راه اندازی مجدد شد. منوی اصلی:", reply_markup=(main_menu if user_id != ADMIN_ID else admin_main_menu))
     
