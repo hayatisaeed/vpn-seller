@@ -15,6 +15,7 @@ from telegram.ext import (
 )
 from telegram import ChatMember
 import datetime
+import database_handler
 
 # Enable logging
 logging.basicConfig(
@@ -82,7 +83,7 @@ async def member_check(update, context):
 # when the user starts the bot
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    # First, add user data to databases (database_handler)
+    database_handler.starting_info(user_id=user_id, user_name=update.effective_user.username, inviter=0)# First, add user data to databases (database_handler)
     if not await member_check(update, context):
         keyboard = [
             [InlineKeyboardButton('عضویت در کانال', url=f"https://t.me/{CHANNEL_ID[1:]}")],
@@ -205,7 +206,7 @@ async def charge_get_resid(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     user_id = update.effective_user.id
     markup = ReplyKeyboardMarkup(main_menu_keyboard)
     buttons = [
-        [InlineKeyboardButton('تایید ✅', callback_data=f"ok {user_id}"), InlineKeyboardButton('رد تراکنش ❌', callback_data=f'no {user_id}')],
+        [InlineKeyboardButton('تایید ✅', callback_data=f"ok {user_id}"), InlineKeyboardButton('رد تراکنش ❌', callback_data=f'deny {user_id}')],
         [InlineKeyboardButton('پیام', callback_data=f"reply_to_user {user_id}"), InlineKeyboardButton('مدیریت کاربر', callback_data=f'admin_user_panel {user_id}')],
         [InlineKeyboardButton('🔴مسدود کردن کاربر', callback_data=f"block_user {user_id}")]
     ]
@@ -216,9 +217,10 @@ async def charge_get_resid(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             caption = update.message.caption
         else:
             caption = 'بدون توضیحات'
-        await context.bot.send_photo(chat_id=ADMIN_ID, photo=photo_file_id, caption=f"🤑💲 دریافتی جدید از کاربر {user_id}:\n\n\nمتن رسید:\n{caption}", reply_markup=admin_markup)
-        await update.message.reply_text('✅درخواست افزایش موجودی ارسال شد. بلافاصله پس از تایید ادمین موجودی شما افزایش خواهد یافت.', reply_markup=main_menu)
-        # update with db: add waiting amount
+        payment_id = update.message.message_id
+        # update with db: add to database
+        await context.bot.send_photo(chat_id=ADMIN_ID, photo=photo_file_id, caption=f"🤑💲 دریافتی جدید از کاربر {user_id}:\n\nمبلغ: {context.user_data['charge_price']} تومان\n\n آیدی تلگرامی: {update.effective_user.username} \n\n\n\nتوضیحات رسید:\n{caption}", reply_markup=admin_markup)
+        await update.message.reply_text(f'✅درخواست افزایش موجودی ارسال شد. بلافاصله پس از تایید ادمین موجودی شما افزایش خواهد یافت.\n\nشماره پیگیری:{user_id}-{payment_id}', reply_markup=main_menu)
         return ConversationHandler.END
     elif update.message.text:
         txt = update.message.text
@@ -226,8 +228,8 @@ async def charge_get_resid(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         await update.message.reply_text('✅درخواست افزایش موجودی ارسال شد. بلافاصله پس از تایید ادمین موجودی شما افزایش خواهد یافت.', reply_markup=main_menu)
         # update with db: add waiting amount
         return ConversationHandler.END
-    await update.message.reply_text('🚫 رسید ارسال نشد. لطفا متن یا تصویر ارسال بفرمایید.', reply_markup=main_menu)
-    return ConversationHandler.END
+    await update.message.reply_text('🚫 رسید ارسال نشد. لطفا متن یا تصویر ارسال بفرمایید.', reply_markup=cancel_markup)
+    return 'RESID'
 
 
 

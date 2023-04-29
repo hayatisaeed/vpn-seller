@@ -1,0 +1,8 @@
+{
+    "user_id": {
+        "msg_id": {
+            "price": 100,
+            "status": "waiting (or ok or denied)"
+        }
+    }
+}

@@ -18,6 +18,8 @@ ADMIN sends configs to the bot, and bot sells them.
 * set percentage of money that the user has to pay when he wants to buy a config.
 * set some users as hamkar, so can brodcast messages to only hamkars or normal users.
 * verify users payment, then accept them or not by one click.
+* get databases backup by command
+* set percentage of commission for any user
 
 ## USER Panel:
 * channel lock (has to be joined to specified channel before using the bot) ✅
@@ -29,4 +31,6 @@ ADMIN sends configs to the bot, and bot sells them.
 * help
 * visit configs data (GB, Exp)
 * send message to admin ✅
+* visit payment logs
+* get commission link, and for any bot start, get a specified price into wallet, and for any buy, get the percentage that admin sets for them
 
