@@ -9,6 +9,7 @@ class newUser:
         try:
             with open('data/users.json', 'r') as f:
                 data = json.load(f)
+                print(data, '\n', 12)
                 temp = data[str(user_id)]['percent']
             return 0
         except:
