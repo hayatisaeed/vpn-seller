@@ -83,7 +83,7 @@ async def member_check(update, context):
 # when the user starts the bot
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    print(database_handler.userInfo.new_user(self, user_id))
+    print(database_handler.userInfo.new_user(user_id))
     print(database_handler.userInfo(user_id).credit)
     if not await member_check(update, context):
         keyboard = [
