@@ -255,7 +255,7 @@ async def show_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         buttons.append([InlineKeyboardButton(packages_data[i]['package_name'], callback_data=f"buy {i}")])
     buttons.append([InlineKeyboardButton('🔙 بازگشت', callback_data=f"main_menu")])
     inline_markup = InlineKeyboardMarkup(buttons)
-    await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=[inline_markup, main_menu])
+    await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=inline_markup)
 
 
 #--- ADMIN ---#
