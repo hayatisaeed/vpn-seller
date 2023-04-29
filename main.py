@@ -236,7 +236,7 @@ async def charge_get_resid(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         payment_id = update.message.message_id
         charge_price = context.user_data['charge_price']
         # update with db: add to database
-        await context.bot.send_message(chat_id=ADMIN_ID, text=f"🤑💲 دریافتی جدید از کاربر {user_id}:\n\nمبلغ: {charge_price} تومان\n\n آیدی تلگرامی: @{update.effective_user.username} \n\n\n\nتوضیحات رسید:\n{caption}", reply_markup=admin_markup)
+        await context.bot.send_message(chat_id=ADMIN_ID, text=f"🤑💲 دریافتی جدید از کاربر {user_id}:\n\nمبلغ: {charge_price} تومان\n\n آیدی تلگرامی: @{update.effective_user.username} \n\n\n\nتوضیحات رسید:\n{txt}", reply_markup=admin_markup)
         await update.message.reply_text(f'✅درخواست افزایش موجودی ارسال شد. بلافاصله پس از تایید ادمین موجودی شما افزایش خواهد یافت.\n\nشماره پیگیری:\n{user_id}-{payment_id}', reply_markup=main_menu)
         return ConversationHandler.END
     await update.message.reply_text('🚫 رسید ارسال نشد. لطفا متن یا تصویر ارسال بفرمایید.', reply_markup=cancel_markup)
