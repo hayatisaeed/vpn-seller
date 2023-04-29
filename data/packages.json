@@ -1,7 +1,21 @@
 {
     "packages_id": {
-        "package_name": "some name",
+        "package_name": "پکیج ۱",
+        "package_description": "Info",
         "package_operator": "operator",
-        "package_price": 100000
+        "package_price": 90000
+    },
+    "packages_id2": {
+        "package_name": "پکیج ۲",
+        "package_description": "Info",
+        "package_operator": "operator",
+        "package_price": 84500
+    },
+    "packages_id3": {
+        "package_name": "پکیج ۳",
+        "package_description": "Info",
+        "package_operator": "operator",
+        "package_price": 118000
     }
+
 }

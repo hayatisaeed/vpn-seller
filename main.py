@@ -244,6 +244,15 @@ async def charge_get_resid(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await update.message.reply_text('🚫 رسید ارسال نشد. لطفا متن یا تصویر ارسال بفرمایید.', reply_markup=cancel_markup)
     return 'RESID'
 
+async def show_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    packages_data = database_handler.getPackages()
+    msg = 'packages:\n' # should be updated by database
+    buttons = [[InlineKeyboardButton('*', callback_data=f"none"), InlineKeyboardButton('عنوان', callback_data=f"none"), InlineKeyboardButton('اپراتور', callback_data=f"none"), InlineKeyboardButton('توضیحات', callback_data=f"none"), InlineKeyboardButton('قیمت', callback_data=f"none"), InlineKeyboardButton('خرید', callback_data=f"none")]]
+    for i in packages_data:
+        buttons.append([InlineKeyboardButton(i, callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_name'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['operator'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_description'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_price'], callback_data=f"none"), InlineKeyboardButton('خرید', callback_data=f"buy {i}")])
+    inline_markup = InlineKeyboardMarkup(buttons)
+    await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=inline_markup)
 
 
 #--- ADMIN ---#
@@ -275,6 +284,8 @@ def main() -> None:
 
     joined_handler = CallbackQueryHandler(joined_check, pattern="^joined$")
 
+    show_package_handler = MessageHandler(filters.Regex('^خرید سرویس 🛒$'), show_packages)
+
     send_support_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
@@ -302,6 +313,7 @@ def main() -> None:
     application.add_handler(show_info_message_handler)
     application.add_handler(send_support_message_conv_handler)
     application.add_handler(charge_wallet_conv_handler)
+    application.add_handler(show_package_handler)
 
     # Start the bot
     application.run_polling()
