@@ -7,7 +7,7 @@ import json
 class newUser:
     def __init__(self, user_id = 0, is_hamkar = 0, percent = 100, credit = 0, accepted_rules = 1, is_blocked = 0, user_name = "none", inviter = 0, number_of_invited = 0):
         try:
-            with open('data/users.json', 'w') as f:
+            with open('data/users.json', 'r') as f:
                 data = json.load(f)
                 temp = data[user_id]['percent']
                 return 0
@@ -22,7 +22,7 @@ class newUser:
         self.blocked = is_blocked
         self.inviter = inviter
         self.subset_number = number_of_invited
-        with open('data/users.json', 'r') as f:
+        with open('data/users.json', 'w+') as f:
             data = json.load(f)
             data[user_id] = {"is_hamkar": self.is_hamkar, "percent": self.percent, "credit": self.credit, "accepted_rules": 1, "is_blocked": self.blocked, "username": self.user_name, "inviter": self.inviter, "number_of_invited": self.subset_number}
             json.dump(data, f)
