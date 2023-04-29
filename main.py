@@ -250,7 +250,7 @@ async def show_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     msg = 'packages:\n' # should be updated by database
     buttons = [[InlineKeyboardButton('*', callback_data=f"none"), InlineKeyboardButton('عنوان', callback_data=f"none"), InlineKeyboardButton('اپراتور', callback_data=f"none"), InlineKeyboardButton('توضیحات', callback_data=f"none"), InlineKeyboardButton('قیمت', callback_data=f"none"), InlineKeyboardButton('خرید', callback_data=f"none")]]
     for i in packages_data:
-        buttons.append([InlineKeyboardButton(i, callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_name'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['operator'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_description'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_price'], callback_data=f"none"), InlineKeyboardButton('خرید', callback_data=f"buy {i}")])
+        buttons.append([InlineKeyboardButton(i, callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_name'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_operator'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_description'], callback_data=f"none"), InlineKeyboardButton(packages_data[i]['package_price'], callback_data=f"none"), InlineKeyboardButton('خرید', callback_data=f"buy {i}")])
     inline_markup = InlineKeyboardMarkup(buttons)
     await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=inline_markup)
 
