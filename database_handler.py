@@ -21,7 +21,7 @@ def newUser(user_id = 0, is_hamkar = 0, percent = 100, credit = 0, accepted_rule
     return 1
 
     
-def payments(user_id, payment_id, price, status = "waiting"):
+def newPayment(user_id, payment_id, price, status = "waiting"):
     try:
         with open('data/payments.json', 'r') as f:
             temp = json.loads(f)[str(user_id)]
