@@ -15,7 +15,7 @@ def newUser(user_id = 0, is_hamkar = 0, percent = 100, credit = 0, accepted_rule
     
     with open('data/users.json', 'r') as f:
         data = json.load(f)
-    data[str(self.user_id)] = {"is_hamkar": is_hamkar, "percent": percent, "credit": credit, "accepted_rules": 1, "is_blocked": is_blocked, "username": user_name, "inviter": inviter, "number_of_invited": number_of_invited}
+    data[str(user_id)] = {"is_hamkar": is_hamkar, "percent": percent, "credit": credit, "accepted_rules": 1, "is_blocked": is_blocked, "username": user_name, "inviter": inviter, "number_of_invited": number_of_invited}
     with open('data/users.json', 'w') as f:
         json.dump(data, f)
     return 1
