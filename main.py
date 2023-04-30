@@ -426,7 +426,7 @@ def main() -> None:
     )
 
     user_manage_conv_handler = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex('^👤 مدیریت کاربر$')), manage_user],
+        entry_points=[MessageHandler(filters.Regex('^👤 مدیریت کاربر$'), manage_user)],
         states={
 
         },
