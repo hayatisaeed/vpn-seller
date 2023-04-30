@@ -352,6 +352,7 @@ async def show_manage_user_panel(update: Update, context: ContextTypes.DEFAULT_T
             blocked_text = 'آزاد 🕊'
         msg = f"ℹ️ اطلاعات کاربر {user_panel_id} به شرح زیر است: \n\n\n💰 موجودی: {user_credit} تومان\n🧮 درصد پرداختی: {user_percent}\n🤝 وضعیت همکاری: {'همکار ✅' if user_is_hamkar else 'کاربر عادی'}\n✋ وضعیت انسداد: {'مسدود ⛔️' if user_is_blocked else 'آزاد 🟢'}\n🤵‍♂️ معرف: {'ندارد' if user_inviter == 0 else user_inviter}\n🏃‍♂ تعداد زیر مجموعه: {user_number_of_invited}\n\n\n چه کنم ❓"
         await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=user_manage_markup)
+        context.user_data['manage_user_id'] = user_panel_id
         return 'GET_COMMAND'
     except:
         await context.bot.send_message(chat_id=user_id, text=f"هیچ یوزری با مشخصات زیر پیدا نشد\n\n\n{update.message.text}\n\n دوباره بفرست آیدیشو.", reply_markup=cancel_markup)
@@ -365,20 +366,41 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
     for i in user_manage_keyboard:
         for j in i:
             lst.append(j)
-    if update.message.text not in lst:
+    msg = update.message.text
+    if msg not in lst:
         await context.bot.send_message(chat_id=user_id, text="متوجه نشدم، چیکار کنم؟ (از منوی پایین انتخاب کن)", reply_markup=user_manage_markup)
         return 'GET_COMMAND'
     else:
+        if msg == '📨 پیام':
+            return 'GET_MESSAGE'
+        if msg == '💳 موجودی':
+            return 'GET_CREDIT'
+        if msg == '🤝 همکار / عادی':
+            return 'CHANGE_HAMKARI'
+        if msg == '🧮 درصد پرداختی':
+            return 'GET_PERCENT'
+        if msg == '📅 تاریخچه پرداخت':
+            return 'SEND_HISTORY'
+        if msg == '⛔️ بلاک / آنبلاک':
+            return 'CHANGE_BLOCK'
         await context.bot.send_message(chat_id=user_id, text="دریافت شد تمام.", reply_markup=admin_main_menu)
         return ConversationHandler.END
 
 
 async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    pass
-
-async def reply_to_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    pass
-
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="دادا نمیتونی از این استفاده کنی. ارور بمولا", reply_markup=main_menu)
+        return ConversationHandler.END
+    msg_id = update.message.message_id
+    try:
+        await context.bot.copy_message(from_chat_id=ADMIN_ID, chat_id=context.user_data['manage_user_id'], message_id=msg_id)
+        msg = f'پیامت ارسال شد.\n دیگه چه امری راجع به {context.user_data['manage_user_id']} داری؟'
+        await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=user_manage_markup)
+    except:
+        msg = f'☹️ متاسفانه به دلایلی پیامت ارسال نشد.\n\nUserID: {context.user_data['manage_user_id']}\n\nدیگه چه امری داری؟'
+        await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=user_manage_markup)
+    return 'GET_COMMAND'
 
 
 
@@ -430,7 +452,13 @@ def main() -> None:
         entry_points=[MessageHandler(filters.Regex('^👤 مدیریت کاربر$'), manage_user)],
         states={
             'GET_ID': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, show_manage_user_panel)],
-            'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, user_manage_get_command)]
+            'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, user_manage_get_command)],
+            'GET_MESSAGE': [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), send_user_message)],
+            'GET_CREDIT': [],
+            'CHANGE_HAMKARI': [],
+            'GET_PERCENT': [],
+            'SEND_HISTORY': [],
+            'CHANGE_BLOCK': []
         },
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
