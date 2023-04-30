@@ -339,23 +339,19 @@ async def show_manage_user_panel(update: Update, context: ContextTypes.DEFAULT_T
         return ConversationHandler.END
     try:
         user_panel_id = int(update.message.text)
-        print(1) # check
         user_data = database_handler.userInfo(user_panel_id)
-        print(2) # check
         user_percent = user_data['percent']
         user_is_hamkar = user_data['is_hamkar']
         user_credit = user_data['credit']
         user_inviter = user_data['inviter']
         user_number_of_invited = user_data['number_of_invited']
         user_is_blocked = user_data['is_blocked']
-        print(3) # check
         if user_is_blocked:
             blocked_text = 'مسدود شده 🖐'
         else:
             blocked_text = 'آزاد 🕊'
         msg = f"ℹ️ اطلاعات کاربر {user_panel_id} به شرح زیر است: \n\n\n💰 موجودی: {user_credit} تومان\n🧮 درصد پرداختی: {user_percent}\n🤝 وضعیت همکاری: {'همکار ✅' if user_is_hamkar else 'کاربر عادی'}\n✋ وضعیت انسداد: {'مسدود ⛔️' if user_is_blocked else 'آزاد 🟢'}\n🤵‍♂️ معرف: {'ندارد' if user_inviter == 0 else user_inviter}\n🏃‍♂ تعداد زیر مجموعه: {user_number_of_invited}\n\n\n چه کنم ❓"
         await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=user_manage_markup)
-        print(4) # check
         return 'GET_COMMAND'
     except:
         await context.bot.send_message(chat_id=user_id, text=f"هیچ یوزری با مشخصات زیر پیدا نشد\n\n\n{update.message.text}\n\n دوباره بفرست آیدیشو.", reply_markup=cancel_markup)

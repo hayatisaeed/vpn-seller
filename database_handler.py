@@ -45,7 +45,7 @@ def getUsers(user_type="All"): # available types: All, Hamkar, Normal
     
 
 def userInfo(user_id):
-    with open('users.json', 'r') as f:
+    with open('data/users.json', 'r') as f:
         data = json.load(f)
         try:
             return data[str(user_id)]
