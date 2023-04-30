@@ -428,9 +428,10 @@ def main() -> None:
     user_manage_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^👤 مدیریت کاربر$'), manage_user)],
         states={
-
+            'GET_ID': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, show_manage_user_panel)],
+            'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, user_manage_get_command)]
         },
-        fallbacks=[]
+        fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
 
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
