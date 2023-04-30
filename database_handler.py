@@ -22,8 +22,6 @@ def newUser(user_id = 0, is_hamkar = 0, percent = 100, credit = 0, accepted_rule
 
 def getUsers(user_type="All"): # available types: All, Hamkar, Normal
     with open('data/users.json', 'r') as f:
-        if i == "number_of_users":
-            continue
         data = json.load(f)
         result = []
         if user_type == "All":
