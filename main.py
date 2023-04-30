@@ -361,7 +361,7 @@ def main() -> None:
     )
 
     brodcast_message_conv_handler = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex('^🌐 پیام همگانی$'), get_support_message)],
+        entry_points=[MessageHandler(filters.Regex('^🌐 پیام همگانی$'), brodcast)],
         states={
             'GET_PEOPLE': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, brodcast_get_people)],
             'GET_MESSAGE': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, brodcast_get_message)]
