@@ -263,7 +263,7 @@ async def show_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 async def brodcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     if user_id != ADMIN_ID:
-        context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ")
+        await context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ")
         return ConversationHandler.END
     keyboard = [
         ['🤝 فقط همکارها', '👤 فقط کاربرای عادی'],
@@ -271,23 +271,23 @@ async def brodcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         ['🔙 انصراف و بازگشت']
     ]
     reply_markup = ReplyKeyboardMarkup(keyboard)
-    context.bot.send_message(chat_id=user_id, text="حله. برای کدوم دسته میخوای پیام بفرستی؟", reply_markup=reply_markup)
+    await context.bot.send_message(chat_id=user_id, text="حله. برای کدوم دسته میخوای پیام بفرستی؟", reply_markup=reply_markup)
     return 'GET_PEOPLE'
 async def brodcast_get_people(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     if user_id != ADMIN_ID:
-        context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ")
+        await context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ")
         return ConversationHandler.END
     people = update.message.text
     if people == '🤝 فقط همکارها':
         context.user_data['people'] = 'hamkar'
-        context.bot.send_message(chat_id=user_id, text="حله! پیامت رو فقط برای همکار ها میفرستم.\n\n پیامی که میخوای براشون بفرستم رو بفرست واسم.", reply_markup=cancel_markup)
+        await context.bot.send_message(chat_id=user_id, text="حله! پیامت رو فقط برای همکار ها میفرستم.\n\n پیامی که میخوای براشون بفرستم رو بفرست واسم.", reply_markup=cancel_markup)
     elif people == '👤 فقط کاربرای عادی':
         context.user_data['people'] = 'Normal'
-        context.bot.send_message(chat_id=user_id, text="حله! پیامت رو فقط برای کاربرای عادی میفرستم.\n\n پیامی که میخوای واسشون بفرستم رو بفرست واسم.", reply_markup=reply_markup)
+        await context.bot.send_message(chat_id=user_id, text="حله! پیامت رو فقط برای کاربرای عادی میفرستم.\n\n پیامی که میخوای واسشون بفرستم رو بفرست واسم.", reply_markup=reply_markup)
     elif people == 'برای همه':
         context.user_data['people'] = 'All'
-        context.bot.send_message(chat_id=user_id, text="حله! برای همه میفرستم.\n\n پیامی که میخوای واسشون بفرستم رو بفرست واسم.", reply_markup=reply_markup)
+        await context.bot.send_message(chat_id=user_id, text="حله! برای همه میفرستم.\n\n پیامی که میخوای واسشون بفرستم رو بفرست واسم.", reply_markup=reply_markup)
     else:
         keyboard = [
             ['🤝 فقط همکارها', '👤 فقط کاربرای عادی'],
@@ -295,25 +295,25 @@ async def brodcast_get_people(update: Update, context: ContextTypes.DEFAULT_TYPE
             ['🔙 انصراف و بازگشت']
         ]
         reply_markup = ReplyKeyboardMarkup(keyboard)
-        context.bot.send_message(chat_id=user_id, text="متوجه نشدم، برای چه کسی؟", reply_markup=reply_markup)
+        await context.bot.send_message(chat_id=user_id, text="متوجه نشدم، برای چه کسی؟", reply_markup=reply_markup)
         return 'GET_PEOPLE'
     return 'GET_MESSAGE'
 async def brodcast_get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     if user_id != ADMIN_ID:
-        context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ")
+        await context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ")
         return ConversationHandler.END
     msg_id = update.message.message_id
     users = database_handler.getUsers(context.user_data['people'])
-    context.bot.send_message(chat_id=user_id, text=f"در حال ارسال پیام برای دسته‌ی {context.user_data['people']} ...")
+    await context.bot.send_message(chat_id=user_id, text=f"در حال ارسال پیام برای دسته‌ی {context.user_data['people']} ...")
     recivers_count = 0
     for user in users:
         try:
-            context.bot.copy_message(from_chat_id=user_id, chat_id=user, message_id=msg_id)
+            await context.bot.copy_message(from_chat_id=user_id, chat_id=user, message_id=msg_id)
             recivers_count += 1
         except:
             pass
-    context.bot.send_message(chat_id=user_id, text=f"پیام برای {recivers_count} کاربر از دسته‌ی {context.user_data['people']} با موفقیت ارسال شد.")
+    await context.bot.send_message(chat_id=user_id, text=f"پیام برای {recivers_count} کاربر از دسته‌ی {context.user_data['people']} با موفقیت ارسال شد.")
     return ConversationHandler.END
 
 async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
