@@ -43,6 +43,16 @@ def getUsers(user_type="All"): # available types: All, Hamkar, Normal
                     result.append(i)
         return result
     
+
+def userInfo(user_id):
+    with open('users.json', 'r') as f:
+        data = json.load(f)
+        try:
+            return data[str(user_id)]
+        except:
+            return 'NoSuchUser'
+
+
 def newPayment(user_id, payment_id, price, status = "waiting"):
     try:
         with open('data/payments.json', 'r') as f:
@@ -74,23 +84,3 @@ def getPackages():
         data = json.load(f)
     return data
 
-def configs():
-    pass
-
-def messages():
-    pass
-
-def bot():
-    pass
-
-def servers():
-    pass
-
-def user_configs():
-    pass
-
-def user_info():
-    pass
-
-def users():
-    pass

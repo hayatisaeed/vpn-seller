@@ -45,8 +45,13 @@ main_menu_keyboard = [
 main_menu = ReplyKeyboardMarkup(main_menu_keyboard, one_time_keyboard=True)
 
 admin_menu_keyboard = [
-    ['admin_alaki'],
-    ['🌐 پیام همگانی', '👤 پیام به کاربر']
+    ['🌐 پیام همگانی'],
+    ['📊 آمار'],
+    ['🧾 لیست کاربران'],
+    ['👤 مدیریت کاربر'],
+    ['ارسال کانفیگ'],
+    ['⚙️ تنظیمات ربات'],
+    ['📦 پلن ها']
 ]
 admin_main_menu = ReplyKeyboardMarkup(admin_menu_keyboard, one_time_keyboard=True)
 
@@ -55,7 +60,13 @@ cancel_keyboard = [
 ]
 cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 
-
+user_manage_keyboard = [
+    ['📨 پیام', '💳 موجودی'],
+    ['🤝 همکار / عادی', '🧮 درصد پرداختی'],
+    ['📅 تاریخچه پرداخت', '⛔️ بلاک / آنبلاک'],
+    ['🔙 انصراف و بازگشت']
+]
+user_manage_markup = ReplyKeyboardMarkup(user_manage_keyboard, one_time_keyboard=True)
 
 
 
@@ -316,6 +327,51 @@ async def brodcast_get_message(update: Update, context: ContextTypes.DEFAULT_TYP
     await context.bot.send_message(chat_id=user_id, text=f"پیام برای {recivers_count} کاربر از دسته‌ی {context.user_data['people']} با موفقیت ارسال شد.", reply_markup=admin_main_menu)
     return ConversationHandler.END
 
+
+async def manage_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="دسترسی نداری به این بخش دادا. تلاش نکن بی خودی.", reply_markup=main_menu)
+        return ConversationHandler.END
+    await context.bot.send_message(chat_id=user_id, text="آیدی کاربر رو بفرست تا پنل مدیریتیشو برات باز کنم:", reply_markup=cancel_markup)
+    return 'GET_ID'
+async def show_manage_user_panel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="دسترسی نداری به این بخش دادا. تلاش نکن بی خودی.", reply_markup=main_menu)
+        return ConversationHandler.END
+    try:
+        user_panel_id = int(update.message.text)
+        user_data = database_handler.userInfo(user_panel_id)
+        user_percent = user_data['percent']
+        user_is_hamkar = user_data['is_hamkar']
+        user_credit = user_data['credit']
+        user_inviter = user_data['inviter']
+        user_number_of_invited = user_data['number_of_invited']
+        user_is_blocked = user_data['is_blocked']
+        if user_is_blocked:
+            blocked_text = 'مسدود شده 🖐'
+        else:
+            blocked_text = 'آزاد 🕊'
+        msg = f"ℹ️ اطلاعات کاربر {user_panel_id} به شرح زیر است: \n\n\n💰 موجودی: {user_credit} تومان\n🧮 درصد پرداختی: {user_percent}\n🤝 وضعیت همکاری: {'همکار ✅' if user_is_hamkar else 'کاربر عادی'}\n✋ وضعیت انسداد: {'مسدود ⛔️' if user_is_blocked else 'آزاد 🟢'}\n🤵‍♂️ معرف: {'ندارد' if user_inviter == 0 else user_inviter}\n🏃‍♂ تعداد زیر مجموعه: {user_number_of_invited}\n\n\n چه کنم ❓"
+        await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=user_manage_markup)
+        return 'GET_COMMAND'
+    except:
+        await context.bot.send_message(chat_id=user_id, text=f"هیچ یوزری با مشخصات زیر پیدا نشد\n\n\n{update.message.text}\n\n دوباره بفرست آیدیشو.", reply_markup=cancel_markup)
+        return 'GET_ID'
+async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="دسترسی نداری به این بخش دادا. تلاش نکن بی خودی.", reply_markup=main_menu)
+        return ConversationHandler.END
+    if update.message.text not in user_manage_keyboard:
+        await context.bot.send_message(chat_id=user_id, text="متوجه نشدم، چیکار کنم؟ (از منوی پایین انتخاب کن)", reply_markup=user_manage_markup)
+        return 'GET_COMMAND'
+    else:
+        await context.bot.send_message(chat_id=user_id, text="دریافت شد تمام.", reply_markup=admin_main_menu)
+        return ConversationHandler.END
+
+
 async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     pass
 
@@ -367,6 +423,14 @@ def main() -> None:
             'GET_MESSAGE': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, brodcast_get_message)]
         },
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
+    )
+
+    user_manage_conv_handler = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex('^👤 مدیریت کاربر$')), manage_user],
+        states={
+
+        },
+        fallbacks=[]
     )
 
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
