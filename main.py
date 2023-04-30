@@ -276,7 +276,7 @@ async def brodcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 async def brodcast_get_people(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     if user_id != ADMIN_ID:
-        await context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ")
+        await context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ", reply_markup=main_menu)
         return ConversationHandler.END
     people = update.message.text
     if people == '🤝 فقط همکارها':
@@ -284,10 +284,10 @@ async def brodcast_get_people(update: Update, context: ContextTypes.DEFAULT_TYPE
         await context.bot.send_message(chat_id=user_id, text="حله! پیامت رو فقط برای همکار ها میفرستم.\n\n پیامی که میخوای براشون بفرستم رو بفرست واسم.", reply_markup=cancel_markup)
     elif people == '👤 فقط کاربرای عادی':
         context.user_data['people'] = 'Normal'
-        await context.bot.send_message(chat_id=user_id, text="حله! پیامت رو فقط برای کاربرای عادی میفرستم.\n\n پیامی که میخوای واسشون بفرستم رو بفرست واسم.", reply_markup=reply_markup)
+        await context.bot.send_message(chat_id=user_id, text="حله! پیامت رو فقط برای کاربرای عادی میفرستم.\n\n پیامی که میخوای واسشون بفرستم رو بفرست واسم.", reply_markup=cancel_markup)
     elif people == 'برای همه':
         context.user_data['people'] = 'All'
-        await context.bot.send_message(chat_id=user_id, text="حله! برای همه میفرستم.\n\n پیامی که میخوای واسشون بفرستم رو بفرست واسم.", reply_markup=reply_markup)
+        await context.bot.send_message(chat_id=user_id, text="حله! برای همه میفرستم.\n\n پیامی که میخوای واسشون بفرستم رو بفرست واسم.", reply_markup=cancel_markup)
     else:
         keyboard = [
             ['🤝 فقط همکارها', '👤 فقط کاربرای عادی'],
