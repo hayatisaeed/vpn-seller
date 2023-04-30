@@ -45,12 +45,9 @@ main_menu_keyboard = [
 main_menu = ReplyKeyboardMarkup(main_menu_keyboard, one_time_keyboard=True)
 
 admin_menu_keyboard = [
-    ['🌐 پیام همگانی'],
-    ['📊 آمار'],
-    ['🧾 لیست کاربران'],
-    ['👤 مدیریت کاربر'],
-    ['ارسال کانفیگ'],
-    ['⚙️ تنظیمات ربات'],
+    ['🌐 پیام همگانی', '📊 آمار'],
+    ['🧾 لیست کاربران', '👤 مدیریت کاربر'],
+    ['ارسال کانفیگ', '⚙️ تنظیمات ربات'],
     ['📦 پلن ها']
 ]
 admin_main_menu = ReplyKeyboardMarkup(admin_menu_keyboard, one_time_keyboard=True)
@@ -446,6 +443,7 @@ def main() -> None:
     application.add_handler(charge_wallet_conv_handler)
     application.add_handler(show_package_handler)
     application.add_handler(brodcast_message_conv_handler)
+    application.add_handler(user_manage_conv_handler)
 
     # Start the bot
     application.run_polling()
