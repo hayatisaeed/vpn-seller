@@ -371,7 +371,9 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
         await context.bot.send_message(chat_id=user_id, text="متوجه نشدم، چیکار کنم؟ (از منوی پایین انتخاب کن)", reply_markup=user_manage_markup)
         return 'GET_COMMAND'
     else:
+        manage_user_id = context.user_data['manage_user_id']
         if msg == '📨 پیام':
+            await context.bot.send_message(chat_id=user_id, text=f"در حال ارسال پیام برای {manage_user_id}\n\nلطفا متن پیامت رو بنویس:", reply_markup=cancel_markup)
             return 'GET_MESSAGE'
         if msg == '💳 موجودی':
             return 'GET_CREDIT'
