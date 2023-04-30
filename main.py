@@ -380,6 +380,7 @@ def main() -> None:
     application.add_handler(send_support_message_conv_handler)
     application.add_handler(charge_wallet_conv_handler)
     application.add_handler(show_package_handler)
+    application.add_handler(brodcast_message_conv_handler)
 
     # Start the bot
     application.run_polling()
