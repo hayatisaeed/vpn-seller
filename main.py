@@ -280,7 +280,7 @@ async def brodcast_get_people(update: Update, context: ContextTypes.DEFAULT_TYPE
         return ConversationHandler.END
     people = update.message.text
     if people == '🤝 فقط همکارها':
-        context.user_data['people'] = 'hamkar'
+        context.user_data['people'] = 'Hamkar'
         await context.bot.send_message(chat_id=user_id, text="حله! پیامت رو فقط برای همکار ها میفرستم.\n\n پیامی که میخوای براشون بفرستم رو بفرست واسم.", reply_markup=cancel_markup)
     elif people == '👤 فقط کاربرای عادی':
         context.user_data['people'] = 'Normal'

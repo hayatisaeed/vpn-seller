@@ -33,7 +33,7 @@ def getUsers(user_type="All"): # available types: All, Hamkar, Normal
                     result.append(i)
         elif user_type == "Normal":
             for i in data:
-                if not data[i]["is_hamkar"]:
+                if data[i]["is_hamkar"] == 0:
                     result.append(i)
         return result
     
