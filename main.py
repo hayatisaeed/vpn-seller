@@ -395,10 +395,11 @@ async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     msg_id = update.message.message_id
     try:
         await context.bot.copy_message(from_chat_id=ADMIN_ID, chat_id=context.user_data['manage_user_id'], message_id=msg_id)
-        msg = f'پیامت ارسال شد.\n دیگه چه امری راجع به {context.user_data['manage_user_id']} داری؟'
+        manage_user_id = context.user_data['manage_user_id']
+        msg = f'پیامت ارسال شد.\n دیگه چه امری راجع به {manage_user_id} داری؟'
         await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=user_manage_markup)
     except:
-        msg = f'☹️ متاسفانه به دلایلی پیامت ارسال نشد.\n\nUserID: {context.user_data['manage_user_id']}\n\nدیگه چه امری داری؟'
+        msg = f'☹️ متاسفانه به دلایلی پیامت ارسال نشد.\n\nUserID: {manage_user_id}\n\nدیگه چه امری داری؟'
         await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=user_manage_markup)
     return 'GET_COMMAND'
 
