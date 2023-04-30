@@ -361,7 +361,7 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
     if user_id != ADMIN_ID:
         await context.bot.send_message(chat_id=user_id, text="دسترسی نداری به این بخش دادا. تلاش نکن بی خودی.", reply_markup=main_menu)
         return ConversationHandler.END
-    if update.message.text not in user_manage_keyboard:
+    if update.message.text not in [j for j in (i for i in user_manage_keyboard)]:
         await context.bot.send_message(chat_id=user_id, text="متوجه نشدم، چیکار کنم؟ (از منوی پایین انتخاب کن)", reply_markup=user_manage_markup)
         return 'GET_COMMAND'
     else:
