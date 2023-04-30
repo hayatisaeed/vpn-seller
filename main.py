@@ -45,12 +45,13 @@ main_menu_keyboard = [
 main_menu = ReplyKeyboardMarkup(main_menu_keyboard, one_time_keyboard=True)
 
 admin_menu_keyboard = [
-    ['admin_alaki']
+    ['admin_alaki'],
+    ['🌐 پیام همگانی', '👤 پیام به کاربر']
 ]
 admin_main_menu = ReplyKeyboardMarkup(admin_menu_keyboard, one_time_keyboard=True)
 
 cancel_keyboard = [
-    ['انصراف و بازگشت']
+    ['🔙 انصراف و بازگشت']
 ]
 cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 
@@ -180,7 +181,7 @@ async def user_charge_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE)
         ['60000', '70000', '80000', '90000'],
         ['100000', '200000', '500000'],
         ['1000000', '2000000'],
-        ['انصراف و بازگشت']
+        ['🔙 انصراف و بازگشت']
     ]
     markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
     await context.bot.send_message(chat_id=user_id, text=f"شما {user_credit} تومن توی حسابت داری. مقدار مدنظرت برای شارژ کردن رو از منوی پایین انتخاب کن یا عدد مدنظرت رو به لاتین وارد کن (همه‌ی اعداد به تومن هستن):", reply_markup=markup)
@@ -196,7 +197,7 @@ async def charge_get_price(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             ['60000', '70000', '80000', '90000'],
             ['100000', '200000', '500000'],
             ['1000000', '2000000'],
-            ['انصراف و بازگشت']
+            ['🔙 انصراف و بازگشت']
         ]
         markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
         await context.bot.send_message(chat_id=user_id, text='فقط عدد لاتین بفرست.', reply_markup=markup)
@@ -205,7 +206,7 @@ async def charge_get_price(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     card_number = 1234123412341234 # update by db
     card_owner = 'OWNER OF CARD' # update by db
     keyboard = [
-        ['انصراف و بازگشت']
+        ['🔙 انصراف و بازگشت']
     ]
     markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
     await context.bot.send_message(chat_id=user_id, text=f"👍حله. مبلغ {price} پس از واریز به کیف پول شما افزوده خواهد شد.\n\n\nلطفا {price} تومن به شماره کارت زیر واریز کرده و رسیدش رو به صورت تصویر یا متن برای بات بفرستید:\n\n\n🔰 شماره کارت: {card_number}\nبه نام: {card_owner}\n\n.", reply_markup=markup)
@@ -260,7 +261,60 @@ async def show_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 
 #--- ADMIN ---#
 async def brodcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    pass
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ")
+        return ConversationHandler.END
+    keyboard = [
+        ['🤝 فقط همکارها', '👤 فقط کاربرای عادی'],
+        ['برای همه'],
+        ['🔙 انصراف و بازگشت']
+    ]
+    reply_markup = ReplyKeyboardMarkup(keyboard)
+    context.bot.send_message(chat_id=user_id, text="حله. برای کدوم دسته میخوای پیام بفرستی؟", reply_markup=reply_markup)
+    return 'GET_PEOPLE'
+async def brodcast_get_people(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ")
+        return ConversationHandler.END
+    people = update.message.text
+    if people == '🤝 فقط همکارها':
+        context.user_data['people'] = 'hamkar'
+        context.bot.send_message(chat_id=user_id, text="حله! پیامت رو فقط برای همکار ها میفرستم.\n\n پیامی که میخوای براشون بفرستم رو بفرست واسم.", reply_markup=cancel_markup)
+    elif people == '👤 فقط کاربرای عادی':
+        context.user_data['people'] = 'Normal'
+        context.bot.send_message(chat_id=user_id, text="حله! پیامت رو فقط برای کاربرای عادی میفرستم.\n\n پیامی که میخوای واسشون بفرستم رو بفرست واسم.", reply_markup=reply_markup)
+    elif people == 'برای همه':
+        context.user_data['people'] = 'All'
+        context.bot.send_message(chat_id=user_id, text="حله! برای همه میفرستم.\n\n پیامی که میخوای واسشون بفرستم رو بفرست واسم.", reply_markup=reply_markup)
+    else:
+        keyboard = [
+            ['🤝 فقط همکارها', '👤 فقط کاربرای عادی'],
+            ['برای همه'],
+            ['🔙 انصراف و بازگشت']
+        ]
+        reply_markup = ReplyKeyboardMarkup(keyboard)
+        context.bot.send_message(chat_id=user_id, text="متوجه نشدم، برای چه کسی؟", reply_markup=reply_markup)
+        return 'GET_PEOPLE'
+    return 'GET_MESSAGE'
+async def brodcast_get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        context.bot.send_message(chat_id=user_id, text="شما ادمین نیستی برادر من. پیام همگانی میخوای بفرستی؟‌ :) خخخ")
+        return ConversationHandler.END
+    msg_id = update.message.message_id
+    users = database_handler.getUsers(context.user_data['people'])
+    context.bot.send_message(chat_id=user_id, text=f"در حال ارسال پیام برای دسته‌ی {context.user_data['people']} ...")
+    recivers_count = 0
+    for user in users:
+        try:
+            context.bot.copy_message(from_chat_id=user_id, chat_id=user, message_id=msg_id)
+            recivers_count += 1
+        except:
+            pass
+    context.bot.send_message(chat_id=user_id, text=f"پیام برای {recivers_count} کاربر از دسته‌ی {context.user_data['people']} با موفقیت ارسال شد.")
+    return ConversationHandler.END
 
 async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     pass
@@ -292,18 +346,27 @@ def main() -> None:
     send_support_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
-            SEND_SUPPORT_MESSAGE: [MessageHandler(filters.ALL & ~filters.Regex('^انصراف و بازگشت$'), send_support_message)]
+            SEND_SUPPORT_MESSAGE: [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), send_support_message)]
         },
-        fallbacks=[MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu)]
+        fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
 
     charge_wallet_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^➕ افزایش موجودی$'), user_charge_wallet)],
         states={
-            'PRICE': [MessageHandler(~filters.Regex('^انصراف و بازگشت$') & filters.TEXT, charge_get_price)],
-            'RESID':[MessageHandler(~filters.Regex('^انصراف و بازگشت$') & filters.ALL, charge_get_resid)]
+            'PRICE': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, charge_get_price)],
+            'RESID':[MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.ALL, charge_get_resid)]
         },
-        fallbacks=[MessageHandler(filters.Regex('^انصراف و بازگشت$'), back_to_main_menu)]
+        fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
+    )
+
+    brodcast_message_conv_handler = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex('^🌐 پیام همگانی$'), get_support_message)],
+        states={
+            'GET_PEOPLE': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, brodcast_get_people)],
+            'GET_MESSAGE': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, brodcast_get_message)]
+        },
+        fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
 
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)

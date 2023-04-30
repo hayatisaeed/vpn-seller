@@ -20,6 +20,22 @@ def newUser(user_id = 0, is_hamkar = 0, percent = 100, credit = 0, accepted_rule
         json.dump(data, f)
     return 1
 
+def getUsers(user_type="All"): # available types: All, Hamkar, Normal
+    with open('data/users.json', 'r') as f:
+        data = json.load(f)
+        result = []
+        if user_type == "All":
+            for i in data:
+                result.append(i)
+        elif user_type == "Hamkar":
+            for i in data:
+                if data[i]["is_hamkar"]:
+                    result.append(i)
+        elif user_type == "Normal":
+            for i in data:
+                if not data[i]["is_hamkar"]:
+                    result.append(i)
+        return result
     
 def newPayment(user_id, payment_id, price, status = "waiting"):
     try:

@@ -20,6 +20,7 @@ ADMIN sends configs to the bot, and bot sells them.
 * verify users payment, then accept them or not by one click.
 * get databases backup by command
 * set percentage of commission for any user
+* enable or disable selling.
 
 ## USER Panel:
 * channel lock (has to be joined to specified channel before using the bot) ✅
