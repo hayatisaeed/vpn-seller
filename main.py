@@ -313,7 +313,7 @@ async def brodcast_get_message(update: Update, context: ContextTypes.DEFAULT_TYP
             recivers_count += 1
         except:
             pass
-    await context.bot.send_message(chat_id=user_id, text=f"پیام برای {recivers_count} کاربر از دسته‌ی {context.user_data['people']} با موفقیت ارسال شد.")
+    await context.bot.send_message(chat_id=user_id, text=f"پیام برای {recivers_count} کاربر از دسته‌ی {context.user_data['people']} با موفقیت ارسال شد.", reply_markup=admin_main_menu)
     return ConversationHandler.END
 
 async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
