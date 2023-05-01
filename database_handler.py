@@ -91,6 +91,14 @@ def newPayment(user_id, payment_id, price, status = "waiting"):
         json.dump(data, f)
     return 1
 
+def getPayment(user_id):
+    try:
+        with open('data/payments.json', 'r') as f:
+            data = json.load(f)
+            return data[str(user_id)]
+    except:
+        return []
+
 def getPackages():
     with open('data/packages.json', 'r') as f:
         data = json.load(f)

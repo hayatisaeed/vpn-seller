@@ -3,7 +3,7 @@ import logging
 from typing import Dict
 import telegram
 from telegram import *
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ParseMode
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -15,6 +15,7 @@ from telegram.ext import (
 )
 from telegram import ChatMember
 import datetime
+import prettytable as pt
 import database_handler
 
 # Enable logging
@@ -59,8 +60,9 @@ cancel_markup = ReplyKeyboardMarkup(cancel_keyboard, one_time_keyboard=True)
 
 user_manage_keyboard = [
     ['📨 پیام', '💳 موجودی'],
-    ['🤝 همکار / عادی', '🧮 درصد پرداختی'],
-    ['📅 تاریخچه پرداخت', '⛔️ بلاک / آنبلاک'],
+    ['⛔️ بلاک / آنبلاک', '🤝 همکار / عادی', ],
+    ['🧮 درصد پرداختی', '📅 تاریخچه پرداخت'],
+    ['🗑 حذف کاربر', '🔄 تایید تراکنش'],
     ['🔙 انصراف و بازگشت']
 ]
 user_manage_markup = ReplyKeyboardMarkup(user_manage_keyboard, one_time_keyboard=True)
@@ -357,6 +359,7 @@ async def show_manage_user_panel(update: Update, context: ContextTypes.DEFAULT_T
     except:
         await context.bot.send_message(chat_id=user_id, text=f"هیچ یوزری با مشخصات زیر پیدا نشد\n\n\n{update.message.text}\n\n دوباره بفرست آیدیشو.", reply_markup=cancel_markup)
         return 'GET_ID'
+
 async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     if user_id != ADMIN_ID:
@@ -398,7 +401,23 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
             await context.bot.send_message(chat_id=user_id, text=f"🧮 درصد پرداختی فعلی این کاربر: {user_percent}\n\n بکنمش چند درصد؟", reply_markup=cancel_markup)
             return 'GET_PERCENT'
         if msg == '📅 تاریخچه پرداخت':
-            return 'SEND_HISTORY'
+            try:
+                payment_log = database_handler.getPayment(manage_user_id)
+                table = pt.PrettyTable(['id', '💲 مبلغ', 'وضعیت'])
+                table_data = [(str(i), payment_log[i]['price'], payment_log[i]['status'])]
+                for idd, price, status in table_data:
+                    if status == 'ok':
+                        status = '✅'
+                    elif status == 'waiting':
+                        status = '🟡'
+                    elif status == 'denied':
+                        status = '❌'
+                    table.add_row([idd, price, status])
+                context.bot.send_message(chat_id=user_id, text=f"🧾 اطلاعات پرداخت این کاربر به شرح زیر است: \n\n\n<pre>{table}</pre>", parse_mode=ParseMode.HTML, reply_markup=user_manage_markup)
+                return 'GET_COMMAND'
+            except:
+                context.bot.send_message(chat_id=user_id, text="خطایی رخ داده است.", reply_markup=user_manage_markup)
+                return 'GET_COMMAND'
         if msg == '⛔️ بلاک / آنبلاک':
             try:
                 user_is_blocked = int(database_handler.userInfo(manage_user_id)['is_blocked'])
@@ -413,6 +432,9 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
                     return 'GET_COMMAND'
             except:
                 pass
+        if msg == '🗑 حذف کاربر':
+            context.bot.send_message(chat_id=user_id, text="✖️ در حال حاضر امکان حذف کاربر وجود ندارد.", reply_markup=user_manage_markup)
+            return 'GET_COMMAND'
         await context.bot.send_message(chat_id=user_id, text="دریافت شد تمام.", reply_markup=admin_main_menu)
         return ConversationHandler.END
 
