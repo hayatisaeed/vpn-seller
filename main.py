@@ -403,6 +403,7 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
             await context.bot.send_message(chat_id=user_id, text=f"🧮 درصد پرداختی فعلی این کاربر: {user_percent}\n\n بکنمش چند درصد؟", reply_markup=cancel_markup)
             return 'GET_PERCENT'
         if msg == '📅 تاریخچه پرداخت':
+            await context.bot.send_message(chat_id=user_id, text="none", parse_mode=ParseMode.HTML, reply_markup=user_manage_markup)
             try:
                 payment_log = database_handler.getPayment(manage_user_id)
                 if payment_log == []:
@@ -419,11 +420,7 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
                     elif status == 'denied':
                         status = '❌'
                     table.add_row([idd, price, status])
-                
-                await context.bot.send_message(chat_id=user_id, text=f"🧾 اطلاعات پرداخت این کاربر به شرح زیر است: \n\n\n<pre>{table}</pre>", reply_markup=user_manage_markup) # check
-                print(3) # check
                 await context.bot.send_message(chat_id=user_id, text=f"🧾 اطلاعات پرداخت این کاربر به شرح زیر است: \n\n\n<pre>{table}</pre>", parse_mode=ParseMode.HTML, reply_markup=user_manage_markup)
-                print(4) # check
                 return 'GET_COMMAND'
             except:
                 await context.bot.send_message(chat_id=user_id, text="خطایی رخ داده است.", reply_markup=user_manage_markup)
@@ -443,7 +440,7 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
             except:
                 pass
         if msg == '🗑 حذف کاربر':
-            context.bot.send_message(chat_id=user_id, text="✖️ در حال حاضر امکان حذف کاربر وجود ندارد.", reply_markup=user_manage_markup)
+            await context.bot.send_message(chat_id=user_id, text="✖️ در حال حاضر امکان حذف کاربر وجود ندارد.", reply_markup=user_manage_markup)
             return 'GET_COMMAND'
         await context.bot.send_message(chat_id=user_id, text="دریافت شد تمام.", reply_markup=admin_main_menu)
         return ConversationHandler.END
