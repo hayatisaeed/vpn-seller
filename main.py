@@ -416,16 +416,16 @@ async def set_user_credit(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         val = int(update.message.text)
         try:
             database_handler.editUser(uid, 'credit', val)
-            context.bot.send_message(chat_id=user_id, text="موجودی تغییر کرد. دیگه چه کنم؟", reply_markup=user_manage_markup)
-            context.bot.send_message(chat_id=uid, text=f"💰 موجودی جدید: {val} تومان")
+            await context.bot.send_message(chat_id=user_id, text="موجودی تغییر کرد. دیگه چه کنم؟", reply_markup=user_manage_markup)
+            await context.bot.send_message(chat_id=uid, text=f"💰 موجودی جدید: {val} تومان")
             return 'GET_COMMAND'
         except:
             await context.bot.send_message(chat_id=user_id, text="خطایی رخ داده، کل عملیات رو لغو کردم.", reply_markup=admin_main_menu)
             return ConversationHandler.END
     except:
-        context.bot.send_message(chat_id=user_id, text="عدد لاتین بفرست:", reply_markup=cancel_markup)
+        await context.bot.send_message(chat_id=user_id, text="عدد لاتین بفرست:", reply_markup=cancel_markup)
         return 'GET_CREDIT'
-    context.bot.send_message(chat_id=user_id, text="منوی اصلی:", reply_markup=admin_main_menu)
+    await context.bot.send_message(chat_id=user_id, text="منوی اصلی:", reply_markup=admin_main_menu)
     return ConversationHandler.END
 
 
