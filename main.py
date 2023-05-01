@@ -406,7 +406,7 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
                 try:
                     database_handler.editUser(manage_user_id, 'is_blocked', (0 if user_is_blocked else 1))
                     await context.bot.send_message(chat_id=user_id, text="وضعیتش تغییر کرد. حالا چیکار کنم؟", reply_markup=user_manage_markup)
-                    await context.bot.send_message(chat_id=manage_user_id, text=f"{'شما از بلاک بودن خارج شدید و میتوانید به پشتیبانی پیام ارسال کنید ✅' if user_is_hamkar else 'شما توسط ادمین بلاک شده اید. دیگر نمیتوانید به پشتیبانی پیام ارسال کنید ⛔️'}")
+                    await context.bot.send_message(chat_id=manage_user_id, text=f"{'شما از بلاک بودن خارج شدید و میتوانید به پشتیبانی پیام ارسال کنید ✅' if user_is_blocked else 'شما توسط ادمین بلاک شده اید. دیگر نمیتوانید به پشتیبانی پیام ارسال کنید ⛔️'}")
                     return 'GET_COMMAND'
                 except:
                     await context.bot.send_message(chat_is=user_id, text="خطایی رخ داده است.", reply_markup=user_manage_markup)
