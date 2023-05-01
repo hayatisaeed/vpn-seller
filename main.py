@@ -451,10 +451,13 @@ async def get_user_percent(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     uid = context.user_data['manage_user_id']
     try:
         percent = int(update.message.text)
+        print(1) # check
         if get_percent > 100 or get_percent < 0:
             await context.bot.send_message(chat_id=user_id, text="لطفا فقط یک عدد لاتین بین 0 و 100 بفرست", reply_markup=cancel_markup)
             return 'GET_PERCENT'
+        print(2) # check
         database_handler.editUser(uid, 'percent', percent)
+        print (3) # check
         await context.bot.send_message(chat_id=user_id, text="انجام شد. دیگه چه امری داری؟", reply_markup=user_manage_markup)
         await context.bot.send_message(chat_id=uid, text=f"🧮 شما از این به بعد {percent} درصد از هزینه ها را پرداخت خواهید کرد.")
         return 'GET_COMMAND'
