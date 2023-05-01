@@ -20,6 +20,17 @@ def newUser(user_id = 0, is_hamkar = 0, percent = 100, credit = 0, accepted_rule
         json.dump(data, f)
     return 1
 
+def editUser(user_id, key, val):
+    try:
+        with open('data/users.json', 'r') as f:
+            data = json.load(f)
+        data[str(user_id)][key] = val
+        with open('data/users.json', 'w') as f:
+            json.dump(data, f)
+        return True
+    except:
+        return False
+
 def getUsers(user_type="All"): # available types: All, Hamkar, Normal
     with open('data/users.json', 'r') as f:
         data = json.load(f)

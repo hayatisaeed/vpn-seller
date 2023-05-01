@@ -376,6 +376,7 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
             await context.bot.send_message(chat_id=user_id, text=f"در حال ارسال پیام برای {manage_user_id}\n\nلطفا متن پیامت رو بنویس:", reply_markup=cancel_markup)
             return 'GET_MESSAGE'
         if msg == '💳 موجودی':
+            await context.bot.send_message(chat_id=user_id, text=f"در حال تعیین موجودی برای {manage_user_id} هستی.\n\n💰 موجودی فعلیش: {database_handler.userInfo(manage_user_id)['credit']} تومان\n\n\nموجودیش چقدر باید باشه؟")
             return 'GET_CREDIT'
         if msg == '🤝 همکار / عادی':
             return 'CHANGE_HAMKARI'
@@ -403,8 +404,29 @@ async def send_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     except:
         msg = f'☹️ متاسفانه به دلایلی پیامت ارسال نشد.\n\nUserID: {manage_user_id}\n\nدیگه چه امری داری؟'
         await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=user_manage_markup)
-    return 'GET_COMMAND'
+    return 'GET_COMMAND' 
 
+async def set_user_credit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="دادا نمیتونی از این استفاده کنی. ارور بمولا", reply_markup=main_menu)
+        return ConversationHandler.END
+    try:
+        uid = context.user_data['manage_user_id']
+        val = int(update.message.text)
+        try:
+            database_handler.editUser(uid, 'credit', val)
+            context.bot.send_message(chat_id=user_id, text="موجودی تغییر کرد. دیگه چه کنم؟", reply_markup=user_manage_markup)
+            context.bot.send_message(chat_id=uid, text=f"💰 موجودی جدید: {val} تومان")
+            return 'GET_COMMAND'
+        except:
+            await context.bot.send_message(chat_id=user_id, text="خطایی رخ داده، کل عملیات رو لغو کردم.", reply_markup=admin_main_menu)
+            return ConversationHandler.END
+    except:
+        context.bot.send_message(chat_id=user_id, text="عدد لاتین بفرست:", reply_markup=cancel_markup)
+        return 'GET_CREDIT'
+    context.bot.send_message(chat_id=user_id, text="منوی اصلی:", reply_markup=admin_main_menu)
+    return ConversationHandler.END
 
 
 
@@ -457,7 +479,7 @@ def main() -> None:
             'GET_ID': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, show_manage_user_panel)],
             'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, user_manage_get_command)],
             'GET_MESSAGE': [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), send_user_message)],
-            'GET_CREDIT': [],
+            'GET_CREDIT': [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), set_user_credit)],
             'CHANGE_HAMKARI': [],
             'GET_PERCENT': [],
             'SEND_HISTORY': [],
