@@ -95,7 +95,10 @@ def getPayment(user_id):
     try:
         with open('data/payments.json', 'r') as f:
             data = json.load(f)
-            return data[str(user_id)]
+            if data[str(user_id)] == {}:
+                return []
+            else:
+                return data[str(user_id)]
     except:
         return []
 

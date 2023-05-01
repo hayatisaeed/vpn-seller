@@ -405,6 +405,9 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
         if msg == '📅 تاریخچه پرداخت':
             try:
                 payment_log = database_handler.getPayment(manage_user_id)
+                if payment_log == []:
+                    await context.bot.send_message(chat_id=user_id, text="✖️ این کاربر تا کنون هیچ پرداختی انجام نداده.", reply_markup=user_manage_markup)
+                    return 'GET_COMMAND'
                 table = pt.PrettyTable(['id', '💲 مبلغ', 'وضعیت'])
                 for i in payment_log:
                     table_data = [(str(i), payment_log[i]['price'], payment_log[i]['status'])]
@@ -416,8 +419,7 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
                     elif status == 'denied':
                         status = '❌'
                     table.add_row([idd, price, status])
-                # await context.bot.send_message(chat_id=user_id, text=f"🧾 اطلاعات پرداخت این کاربر به شرح زیر است: \n\n\n<pre>{table}</pre>", parse_mode=ParseMode.HTML, reply_markup=user_manage_markup)
-                await context.bot.send_message(chat_id=user_id, text=f"🧾 اطلاعات پرداخت این کاربر به شرح زیر است: \n\n\n<pre>{'none'}</pre>", reply_markup=user_manage_markup)
+                await context.bot.send_message(chat_id=user_id, text=f"🧾 اطلاعات پرداخت این کاربر به شرح زیر است: \n\n\n<pre>{table}</pre>", parse_mode=ParseMode.HTML, reply_markup=user_manage_markup)
                 return 'GET_COMMAND'
             except:
                 await context.bot.send_message(chat_id=user_id, text="خطایی رخ داده است.", reply_markup=user_manage_markup)
