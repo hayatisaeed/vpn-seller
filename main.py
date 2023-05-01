@@ -409,8 +409,10 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
                     await context.bot.send_message(chat_id=user_id, text="✖️ این کاربر تا کنون هیچ پرداختی انجام نداده.", reply_markup=user_manage_markup)
                     return 'GET_COMMAND'
                 table = pt.PrettyTable(['id', '💲 مبلغ', 'وضعیت'])
+                print(1) # check
                 for i in payment_log:
                     table_data = [(str(i), payment_log[i]['price'], payment_log[i]['status'])]
+                print(2) # check
                 for idd, price, status in table_data:
                     if status == 'ok':
                         status = '✅'
@@ -419,7 +421,9 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
                     elif status == 'denied':
                         status = '❌'
                     table.add_row([idd, price, status])
+                print(3) # check
                 await context.bot.send_message(chat_id=user_id, text=f"🧾 اطلاعات پرداخت این کاربر به شرح زیر است: \n\n\n<pre>{table}</pre>", parse_mode=ParseMode.HTML, reply_markup=user_manage_markup)
+                print(4) # check
                 return 'GET_COMMAND'
             except:
                 await context.bot.send_message(chat_id=user_id, text="خطایی رخ داده است.", reply_markup=user_manage_markup)
