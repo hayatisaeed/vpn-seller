@@ -379,8 +379,23 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
             await context.bot.send_message(chat_id=user_id, text=f"در حال تعیین موجودی برای {manage_user_id} هستی.\n\n💰 موجودی فعلیش: {database_handler.userInfo(manage_user_id)['credit']} تومان\n\n\nموجودیش چقدر باید باشه؟")
             return 'GET_CREDIT'
         if msg == '🤝 همکار / عادی':
-            return 'CHANGE_HAMKARI'
+            try:
+                user_is_hamkar = int(database_handler.userInfo(manage_user_id)['is_hamkar'])
+                await context.bot.send_message(chat_id=user_id, text=f"این یوزر در حال حاضر همکار {'هست' if user_is_hamkar else 'نیست'} \n در حال تغییر وضعیتش ...")
+                try:
+                    database_handler.editUser(manage_user_id, 'is_hamkar', (0 if user_is_hamkar else 1))
+                    await context.bot.send_message(chat_id=user_id, text="وضعیتش تغییر کرد. حالا چیکار کنم؟", reply_markup=user_manage_markup)
+                    await context.bot.send_message(chat_id=manage_user_id, text=f"{'شما از اکنون دیگر به عنوان همکار شناخته نمیشوید. 👋' if user_is_hamkar else 'وضعیت همکاری شما به همکار تغییر کرد. سلام همکار 🤝'}")
+                    return 'GET_COMMAND'
+                except:
+                    await context.bot.send_message(chat_is=user_id, text="خطایی رخ داده است.", reply_markup=user_manage_markup)
+                    return 'GET_COMMAND'
+            except:
+                pass
+            return 'GET_COMMAND'
         if msg == '🧮 درصد پرداختی':
+            user_percent = int(database_handler.userInfo(manage_user_id)['percent'])
+            await context.bot.send_message(chat_id=user_id, text=f"🧮 درصد پرداختی فعلی این کاربر: {user_percent}\n\n بکنمش چند درصد؟", reply_markup=cancel_markup)
             return 'GET_PERCENT'
         if msg == '📅 تاریخچه پرداخت':
             return 'SEND_HISTORY'
@@ -428,9 +443,26 @@ async def set_user_credit(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await context.bot.send_message(chat_id=user_id, text="منوی اصلی:", reply_markup=admin_main_menu)
     return ConversationHandler.END
 
-
-
-
+async def get_user_percent(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="دادا نمیتونی از این استفاده کنی. ارور بمولا", reply_markup=main_menu)
+        return ConversationHandler.END
+    uid = context.user_data['manage_user_id']
+    try:
+        percent = int(update.message.text)
+        if get_percent > 100 or get_percent < 0:
+            await context.bot.send_message(chat_id=user_id, text="لطفا فقط یک عدد لاتین بین 0 و 100 بفرست", reply_markup=cancel_markup)
+            return 'GET_PERCENT'
+        database_handler.editUser(uid, 'percent', percent)
+        await context.bot.send_message(chat_id=user_id, text="انجام شد. دیگه چه امری داری؟", reply_markup=user_manage_markup)
+        await context.bot.send_message(chat_id=uid, text=f"🧮 شما از این به بعد {percent} درصد از هزینه ها را پرداخت خواهید کرد.")
+        return 'GET_COMMAND'
+    except:
+        await context.bot.send_message(chat_id=user_id, text="لطفا فقط یک عدد لاتین بین 0 و 100 بفرست", reply_markup=cancel_markup)
+        return 'GET_PERCENT'
+    await context.bot.send_message(chat_id=user_id, text="خطایی رخ داده است. فرایند انجام نشد.", reply_markup=user_manage_markup)
+    return 'GET_COMMAND'
 
 
 
@@ -480,8 +512,7 @@ def main() -> None:
             'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, user_manage_get_command)],
             'GET_MESSAGE': [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), send_user_message)],
             'GET_CREDIT': [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), set_user_credit)],
-            'CHANGE_HAMKARI': [],
-            'GET_PERCENT': [],
+            'GET_PERCENT': [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), get_user_percent)],
             'SEND_HISTORY': [],
             'CHANGE_BLOCK': []
         },
