@@ -3,16 +3,18 @@ import logging
 from typing import Dict
 import telegram
 from telegram import *
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ParseMode
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    CallbackQueryHandler,
-    ContextTypes,
-    ConversationHandler,
-    MessageHandler,
-    filters
-)
+# from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ParseMode
+# from telegram.ext import (
+#     Application,
+#     CommandHandler,
+#     CallbackQueryHandler,
+#     ContextTypes,
+#     ConversationHandler,
+#     MessageHandler,
+#     filters
+# )
+from telegram import *
+from telegram.ext import *
 from telegram import ChatMember
 import datetime
 import prettytable as pt
