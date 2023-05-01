@@ -406,7 +406,7 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
             try:
                 payment_log = database_handler.getPayment(manage_user_id)
                 table = pt.PrettyTable(['id', '💲 مبلغ', 'وضعیت'])
-                for i in table:
+                for i in payment_log:
                     table_data = [(str(i), payment_log[i]['price'], payment_log[i]['status'])]
                 for idd, price, status in table_data:
                     if status == 'ok':
