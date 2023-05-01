@@ -415,10 +415,10 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
                     elif status == 'denied':
                         status = '❌'
                     table.add_row([idd, price, status])
-                context.bot.send_message(chat_id=user_id, text=f"🧾 اطلاعات پرداخت این کاربر به شرح زیر است: \n\n\n<pre>{table}</pre>", parse_mode=ParseMode.HTML, reply_markup=user_manage_markup)
+                await context.bot.send_message(chat_id=user_id, text=f"🧾 اطلاعات پرداخت این کاربر به شرح زیر است: \n\n\n<pre>{table}</pre>", parse_mode=ParseMode.HTML, reply_markup=user_manage_markup)
                 return 'GET_COMMAND'
             except:
-                context.bot.send_message(chat_id=user_id, text="خطایی رخ داده است.", reply_markup=user_manage_markup)
+                await context.bot.send_message(chat_id=user_id, text="خطایی رخ داده است.", reply_markup=user_manage_markup)
                 return 'GET_COMMAND'
         if msg == '⛔️ بلاک / آنبلاک':
             try:
