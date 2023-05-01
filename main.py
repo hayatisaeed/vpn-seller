@@ -409,8 +409,9 @@ async def user_manage_get_command(update: Update, context: ContextTypes.DEFAULT_
                     await context.bot.send_message(chat_id=user_id, text="✖️ این کاربر تا کنون هیچ پرداختی انجام نداده.", reply_markup=user_manage_markup)
                     return 'GET_COMMAND'
                 table = pt.PrettyTable(['id', '💲', '🆗'])
+                table_data = []
                 for i in payment_log:
-                    table_data = [(str(i), payment_log[i]['price'], payment_log[i]['status'])]
+                    table_data.append((str(i), payment_log[i]['price'], payment_log[i]['status']))
                 for idd, price, status in table_data:
                     if status == 'ok':
                         status = '✅'
