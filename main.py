@@ -552,9 +552,9 @@ async def show_user_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     for i in data:
         if data[i]['is_hamkar'] == 1:
-            hamkar_msg += f'👉 ```{i}``` -> @{data[i]['user_name']}\n'
+            hamkar_msg += f'👉 ```{i}``` -> @{ data[i]['user_name'] }\n'
         else:
-            normal_msg += f'👉 ```{i}``` -> @{data[i]['user_name']}\n'
+            normal_msg += f'👉 ```{i}``` -> @{ data[i]['user_name'] }\n'
     
     await context.bot.send_message(chat_id=user_id, text=hamkar_msg, reply_markup=admin_main_menu)
     await context.bot.send_message(chat_id=user_id, text=normal_msg, reply_markup=admin_main_menu)
