@@ -50,8 +50,8 @@ main_menu = ReplyKeyboardMarkup(main_menu_keyboard, one_time_keyboard=True)
 admin_menu_keyboard = [
     ['🌐 پیام همگانی', '📊 آمار'],
     ['🧾 لیست کاربران', '👤 مدیریت کاربر'],
-    ['ارسال کانفیگ', '⚙️ تنظیمات ربات'],
-    ['📦 پلن ها']
+    ['ارسال کانفیگ', '📦 پلن ها'],
+    ['⚙️ تنظیمات ربات']
 ]
 admin_main_menu = ReplyKeyboardMarkup(admin_menu_keyboard, one_time_keyboard=True)
 
@@ -69,6 +69,36 @@ user_manage_keyboard = [
 ]
 user_manage_markup = ReplyKeyboardMarkup(user_manage_keyboard, one_time_keyboard=True)
 
+
+bot_setting_keyboard = [
+    ['📣 کانال ها', '🤝 کمیسیون'],
+    ['🧪 کانفیگ تست', '💬 پیام های بات'],
+    ['🔋 بکاپ دیتابیس', '💡روشن / خاموش 🔴'],
+    ['🔙 انصراف و بازگشت']
+]
+bot_setting_markup = ReplyKeyboardMarkup(bot_setting_keyboard, one_time_keyboard=True)
+
+setting_commission_keyboard = [
+    ['کارمزد استارت', 'درصد از خرید'],
+    ['لیست استثنا', '👤 کمیسیونرها'],
+    ['🔙 انصراف و بازگشت']
+]
+setting_commission_markup = ReplyKeyboardMarkup(setting_commission_keyboard, one_time_keyboard=True)
+
+setting_channels_keyboard = [
+
+]
+setting_channels_markup = ''
+
+setting_messages_keyboard = [
+
+]
+setting_messages_markup = ''
+
+setting_test_keyboard = [
+
+]
+setting_test_markup = ''
 
 
 
@@ -144,7 +174,9 @@ async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 #--- Functions ---#
 async def show_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    await update.message.reply_text('اطلاعات اکانت شما به شرح زیر است:\nاطلاع ۱\nاطلاع ۲\n...', reply_markup=main_menu)
+    data = database_handler.userInfo(user_id)
+    msg = f'ℹ️ اطلاعات اکانت شما به شرح زیر است: \n\n🆔 آیدی عددی شما: ```{user_id}```\n💰 موجودی: {data['credit']} تومان\n{'🧮 درصد پرداخت:' + str(data['percent']) + '\n' if data['percent'] != 100 else ''}{'🤝 وضعیت همکاری: همکار\n' if data['is_hamkar']}✋ وضعیت انسداد: {'بلاک شده ⛔️' if data['is_blocked'] else 'آزاد ✅'}\n🏃‍♂ تعداد زیر مجموعه: {data['number_of_invited']}\n\n.'
+    await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=main_menu)
 
 async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
@@ -164,7 +196,6 @@ async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYP
     user_id = update.effective_user.id
     markup = ReplyKeyboardMarkup(main_menu_keyboard)
     buttons = [
-        [InlineKeyboardButton('پاسخ', callback_data=f"reply_to_user {user_id}"), InlineKeyboardButton('مدیریت کاربر', callback_data=f'admin_user_panel {user_id}')],
         [InlineKeyboardButton('🔴مسدود کردن کاربر', callback_data=f"block_user {user_id}")]
     ]
     admin_markup = InlineKeyboardMarkup(buttons)
@@ -227,9 +258,8 @@ async def charge_get_resid(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     user_id = update.effective_user.id
     markup = ReplyKeyboardMarkup(main_menu_keyboard)
     buttons = [
-        [InlineKeyboardButton('تایید ✅', callback_data=f"ok {user_id}"), InlineKeyboardButton('رد تراکنش ❌', callback_data=f'deny {user_id}')],
-        [InlineKeyboardButton('پیام', callback_data=f"reply_to_user {user_id}"), InlineKeyboardButton('مدیریت کاربر', callback_data=f'admin_user_panel {user_id}')],
-        [InlineKeyboardButton('🔴مسدود کردن کاربر', callback_data=f"block_user {user_id}")]
+        [InlineKeyboardButton('تایید ✅', callback_data=f"ok {user_id}-{update.message.message_id}"), InlineKeyboardButton('رد تراکنش ❌', callback_data=f'deny {user_id}-{update.message.message_id}')],
+        [InlineKeyboardButton('مسدود کردن کاربر ⛔️', callback_data=f"block_user {user_id}")]
     ]
     admin_markup = InlineKeyboardMarkup(buttons)
     if update.message.photo:
@@ -242,7 +272,7 @@ async def charge_get_resid(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         charge_price = context.user_data['charge_price']
         # update with db: add to database
         database_handler.newPayment(user_id, payment_id, charge_price)
-        await context.bot.send_photo(chat_id=ADMIN_ID, photo=photo_file_id, caption=f"🤑💲 دریافتی جدید از کاربر {user_id}:\n\nمبلغ: {charge_price} تومان\n\n آیدی تلگرامی: @{update.effective_user.username} \n\n\n\nتوضیحات رسید:\n{caption}", reply_markup=admin_markup)
+        await context.bot.send_photo(chat_id=ADMIN_ID, photo=photo_file_id, caption=f"🤑💲 دریافتی جدید از کاربر {user_id}:\n\n💲 مبلغ: {charge_price} تومان\n\n🆔 آیدی تلگرامی: @{update.effective_user.username} \n\n\n\n🔢 شماره تراکنش: {payment_id}\n\n💬 توضیحات رسید:\n{caption}", reply_markup=admin_markup)
         await update.message.reply_text(f'✅درخواست افزایش موجودی ارسال شد. بلافاصله پس از تایید ادمین موجودی شما افزایش خواهد یافت.\n\nشماره پیگیری:\n{user_id}-{payment_id}', reply_markup=main_menu)
         return ConversationHandler.END
     elif update.message.text:
@@ -251,7 +281,7 @@ async def charge_get_resid(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         charge_price = context.user_data['charge_price']
         # update with db: add to database
         database_handler.newPayment(user_id, payment_id, charge_price)
-        await context.bot.send_message(chat_id=ADMIN_ID, text=f"🤑💲 دریافتی جدید از کاربر {user_id}:\n\nمبلغ: {charge_price} تومان\n\n آیدی تلگرامی: @{update.effective_user.username} \n\n\n\nتوضیحات رسید:\n{txt}", reply_markup=admin_markup)
+        await context.bot.send_message(chat_id=ADMIN_ID, text=f"🤑💲 دریافتی جدید از کاربر {user_id}:\n\n💲 مبلغ: {charge_price} تومان\n\n🆔 آیدی تلگرامی: @{update.effective_user.username} \n\n\n\n🔢 شماره تراکنش: {payment_id}\n\n💬 توضیحات رسید:\n{txt}", reply_markup=admin_markup)
         await update.message.reply_text(f'✅درخواست افزایش موجودی ارسال شد. بلافاصله پس از تایید ادمین موجودی شما افزایش خواهد یافت.\n\nشماره پیگیری:\n{user_id}-{payment_id}', reply_markup=main_menu)
         return ConversationHandler.END
     await update.message.reply_text('🚫 رسید ارسال نشد. لطفا متن یا تصویر ارسال بفرمایید.', reply_markup=cancel_markup)
@@ -505,8 +535,37 @@ async def get_user_percent(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await context.bot.send_message(chat_id=user_id, text="خطایی رخ داده است. فرایند انجام نشد.", reply_markup=user_manage_markup)
     return 'GET_COMMAND'
 
+async def show_user_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="⛔️ شما ادمین نیستید. \n دسترسی به این بخش برای شما غیر مجاز است.", reply_markup=main_menu)
+        return
+    data = database_handler.getUsers("All")
+    hamkar_msg = '🤝 لیست همکاران به شرح زیر است:\n\n'
+    normal_msg = '👤 لیست کاربران عادی به شرح زیر است: \n\n'
+
+    for i in data:
+        if data[i]['is_hamkar'] == 1:
+            hamkar_msg += f'👉 ```{i}``` -> @{data[i]['user_name']}\n'
+        else:
+            normal_msg += f'👉 ```{i}``` -> @{data[i]['user_name']}\n'
+    
+    await context.bot.send_message(chat_id=user_id, text=hamkar_msg, reply_markup=admin_main_menu)
+    await context.bot.send_message(chat_id=user_id, text=normal_msg, reply_markup=admin_main_menu)
 
 
+async def show_setting(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="⛔️ شما به این بخش دسترسی ندارید ⛔️", reply_markup=main_menu)
+        return ConversationHandler.END
+    await context.bot.send_message(chat_id=user_id, text="⚙️ تنظیمات بات:", reply_markup=bot_setting_markup)
+    return 'GET_COMMAND'
+async def setting_get_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="⛔️ شما به این بخش دسترسی ندارید ⛔️", reply_markup=main_menu)
+        return ConversationHandler.END
+    await context.bot.send_message(chat_id=user_id, text="به زودی انشاءالله", reply_markup=admin_main_menu)
+    return ConversationHandler.END
 
 # instances
 application = Application.builder().token(TOKEN).build()
@@ -554,14 +613,21 @@ def main() -> None:
             'GET_MESSAGE': [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), send_user_message)],
             'GET_CREDIT': [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), set_user_credit)],
             'GET_PERCENT': [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), get_user_percent)],
-            'SEND_HISTORY': [],
-            'CHANGE_BLOCK': []
+        },
+        fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
+    )
+
+    bot_setting_conv_handler = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex('^⚙️ تنظیمات ربات$'), show_setting)],
+        states={
+            'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, setting_get_command)]
         },
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
 
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
-
+    show_user_list_handler = MessageHandler(filters.Regex('^🧾 لیست کاربران$'), show_user_list)
+    
     # reply_to_user_handler = CallbackQueryHandler(reply_to_user, )
 
     # add handlers to the application
@@ -573,6 +639,9 @@ def main() -> None:
     application.add_handler(show_package_handler)
     application.add_handler(brodcast_message_conv_handler)
     application.add_handler(user_manage_conv_handler)
+    application.add_handler(show_user_list_handler)
+    application.add_handler(bot_setting_conv_handler)
+
 
     # Start the bot
     application.run_polling()
