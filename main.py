@@ -175,7 +175,7 @@ async def joined_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 async def show_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     data = database_handler.userInfo(user_id)
-    msg = f'ℹ️ اطلاعات اکانت شما به شرح زیر است: \n\n🆔 آیدی عددی شما: ```{user_id}```\n💰 موجودی: {data['credit']} تومان\n{'🧮 درصد پرداخت:' + str(data['percent']) + '\n' if data['percent'] != 100 else ''}{'🤝 وضعیت همکاری: همکار\n' if data['is_hamkar']}✋ وضعیت انسداد: {'بلاک شده ⛔️' if data['is_blocked'] else 'آزاد ✅'}\n🏃‍♂ تعداد زیر مجموعه: {data['number_of_invited']}\n\n.'
+    msg = f'ℹ️ اطلاعات اکانت شما به شرح زیر است: \n\n🆔 آیدی عددی شما: ```{user_id}```\n💰 موجودی: {data['credit']} تومان\n{'٪ درصد پرداخت:' + str(data['percent']) + '\n' if data['percent'] != 100 else ''}{'🤝 وضعیت همکاری: همکار\n' if data['is_hamkar']}✋ وضعیت انسداد: {'بلاک شده ⛔️' if data['is_blocked'] else 'آزاد ✅'}\n🏃‍♂ تعداد زیر مجموعه: {data['number_of_invited']}\n\n.'
     await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=main_menu)
 
 async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
