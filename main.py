@@ -561,6 +561,7 @@ async def show_user_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 
 async def show_setting(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
     if user_id != ADMIN_ID:
         await context.bot.send_message(chat_id=user_id, text="⛔️ شما به این بخش دسترسی ندارید ⛔️", reply_markup=main_menu)
         return ConversationHandler.END
