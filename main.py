@@ -181,7 +181,7 @@ async def show_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_inviter = user_data['inviter']
     user_number_of_invited = user_data['number_of_invited']
     user_is_blocked = user_data['is_blocked']
-    msg = f"ℹ️ اطلاعات اکانت شما {user_id} به شرح زیر است: \n\n\n💰 موجودی: {user_credit} تومان\n🧮 درصد پرداختی: {user_percent}\n🤝 وضعیت همکاری: {'همکار ✅' if user_is_hamkar else 'کاربر عادی'}\n✋ وضعیت انسداد: {'مسدود ⛔️' if user_is_blocked else 'آزاد 🟢'}\n🤵‍♂️ معرف: {'ندارد' if user_inviter == 0 else user_inviter}\n🏃‍♂ تعداد زیر مجموعه: {user_number_of_invited}"
+    msg = f"ℹ️ اطلاعات اکانت شما {user_id} به شرح زیر است: \n\n\n💰 موجودی: {user_credit} تومان\n🧮 درصد پرداختی: {user_percent}\n🤝 وضعیت همکاری: {'همکار ✅' if user_is_hamkar else 'کاربر عادی'}\n✋ وضعیت انسداد: {'مسدود ⛔️' if user_is_blocked else 'آزاد 🟢'}\n🤵‍♂️ معرف: {'ندارد' if user_inviter == 0 else user_inviter}\n🏃‍♂ تعداد زیر مجموعه: {user_number_of_invited} \n\n\n"
     await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=main_menu)
 
 async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
