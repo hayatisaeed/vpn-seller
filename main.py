@@ -568,9 +568,28 @@ async def show_setting(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     await context.bot.send_message(chat_id=user_id, text="⚙️ تنظیمات بات:", reply_markup=bot_setting_markup)
     return 'GET_COMMAND'
 async def setting_get_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
     if user_id != ADMIN_ID:
         await context.bot.send_message(chat_id=user_id, text="⛔️ شما به این بخش دسترسی ندارید ⛔️", reply_markup=main_menu)
         return ConversationHandler.END
+    cmd = update.message.text
+    if cmd == '🤝 کمیسیون':
+        await context.bot.send_message(chat_id=user_id, text="🤝 تنظیمات کمیسیون: ", reply_markup=setting_commission_markup)
+        return 'COMMISSION'
+    if cmd == '🧪 کانفیگ تست':
+        await context.bot.send_message(chat_id=user_id, text='🧪 تنظیمات کانفیگ تست', reply_markup=setting_test_markup)
+        return 'TEST_CONFIG'
+    if cmd == '📣 کانال ها':
+        await context.bot.send_message(chat_id=user_id, text='📣 تنظیمات کانال ها', reply_markup=setting_channels_markup)
+        return 'CHANNELS'
+    if cmd == '💬 پیام های بات':
+        return 'BOT_MESSAGES'
+    if cmd == '💡روشن / خاموش 🔴':
+        return 'TURN_OFF'
+    if cmd == '🔋 بکاپ دیتابیس':
+        # update: send databases in one zip file
+        await context.bot.send_message(chat_id=user_id, text="⚙️ تنظیمات ربات: ", reply_markup=bot_setting_markup)
+        return 'DB_BACKUP'
     await context.bot.send_message(chat_id=user_id, text="به زودی انشاءالله", reply_markup=admin_main_menu)
     return ConversationHandler.END
 
