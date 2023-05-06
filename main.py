@@ -50,8 +50,7 @@ main_menu = ReplyKeyboardMarkup(main_menu_keyboard, one_time_keyboard=True)
 admin_menu_keyboard = [
     ['🌐 پیام همگانی', '📊 آمار'],
     ['🧾 لیست کاربران', '👤 مدیریت کاربر'],
-    ['ارسال کانفیگ', '📦 پلن ها'],
-    ['⚙️ تنظیمات ربات']
+    ['⚙️ تنظیمات ربات', 'ارسال کانفیگ']
 ]
 admin_main_menu = ReplyKeyboardMarkup(admin_menu_keyboard, one_time_keyboard=True)
 
@@ -71,6 +70,7 @@ user_manage_markup = ReplyKeyboardMarkup(user_manage_keyboard, one_time_keyboard
 
 
 bot_setting_keyboard = [
+    ['🏢 دسته‌بندی‌ها', '📦 پلن ها']
     ['📣 کانال ها', '🤝 کمیسیون'],
     ['🧪 کانفیگ تست', '💬 پیام های بات'],
     ['🔋 بکاپ دیتابیس', '💡روشن / خاموش 🔴'],
@@ -306,6 +306,10 @@ async def show_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     inline_markup = InlineKeyboardMarkup(buttons)
     await context.bot.send_message(chat_id=user_id, text=msg, reply_markup=inline_markup)
 
+
+async def not_yet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    context.bot.send_message(chat_id=user_id, text="متاسفانه این بخش هنوز فعال نشده است. از بخش های دیگر استفاده بفرمایید. در صورت وجود هرگونه مشکل پشتیبانی را با خبر کنید.\n\n", reply_markup=(admin_main_menu if user_id == ADMIN_ID else main_menu))
 
 #--- ADMIN ---#
 async def brodcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -646,13 +650,28 @@ def main() -> None:
     bot_setting_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^⚙️ تنظیمات ربات$'), show_setting)],
         states={
-            'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, setting_get_command)]
+            'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, setting_get_command)],
+            'COMMISSION': [],
+            'TEST_CONFIG': [],
+            'CHANNELS': [],
+            'TURN_OFF': [],
+            'DB_BACKUP': []
         },
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
 
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
     show_user_list_handler = MessageHandler(filters.Regex('^🧾 لیست کاربران$'), show_user_list)
+
+    connection_handler = MessageHandler(filters.Regex('^آموزش اتصال&'), not_yet)
+
+    help_handler = MessageHandler(filters.Regex('^راهنمای بات$'), not_yet)
+
+    user_commission_handler = MessageHandler(filters.Regex('^👤 زیر مجموعه گیری$'), not_yet)
+
+    hamkar_plan_handler = MessageHandler(filters.Regex('^🤝 پلن همکار$'), not_yet)
+
+    payment_history_handler = MessageHandler(filters.Regex('^📆 تاریخچه‌ی پرداخت‌ها$'), not_yet)
     
     # reply_to_user_handler = CallbackQueryHandler(reply_to_user, )
 
@@ -667,6 +686,11 @@ def main() -> None:
     application.add_handler(user_manage_conv_handler)
     application.add_handler(show_user_list_handler)
     application.add_handler(bot_setting_conv_handler)
+    appilcation.add_handler(connection_handler)
+    application.add_handler(help_handler)
+    application.add_handler(user_commission_handler)
+    application.add_handler(hamkar_plan_handler)
+    application.add_handler(payment_history_handler)
 
 
     # Start the bot
