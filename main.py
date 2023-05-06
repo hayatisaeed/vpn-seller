@@ -686,7 +686,7 @@ def main() -> None:
     application.add_handler(user_manage_conv_handler)
     application.add_handler(show_user_list_handler)
     application.add_handler(bot_setting_conv_handler)
-    appilcation.add_handler(connection_handler)
+    application.add_handler(connection_handler)
     application.add_handler(help_handler)
     application.add_handler(user_commission_handler)
     application.add_handler(hamkar_plan_handler)
