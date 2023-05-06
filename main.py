@@ -70,7 +70,7 @@ user_manage_markup = ReplyKeyboardMarkup(user_manage_keyboard, one_time_keyboard
 
 
 bot_setting_keyboard = [
-    ['🏢 دسته‌بندی‌ها', '📦 پلن ها']
+    ['🏢 دسته‌بندی‌ها', '📦 پلن ها'],
     ['📣 کانال ها', '🤝 کمیسیون'],
     ['🧪 کانفیگ تست', '💬 پیام های بات'],
     ['🔋 بکاپ دیتابیس', '💡روشن / خاموش 🔴'],
