@@ -309,7 +309,7 @@ async def show_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 
 async def not_yet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    context.bot.send_message(chat_id=user_id, text="متاسفانه این بخش هنوز فعال نشده است. از بخش های دیگر استفاده بفرمایید. در صورت وجود هرگونه مشکل پشتیبانی را با خبر کنید.\n\n", reply_markup=(admin_main_menu if user_id == ADMIN_ID else main_menu))
+    await context.bot.send_message(chat_id=user_id, text="متاسفانه این بخش هنوز فعال نشده است. از بخش های دیگر استفاده بفرمایید. در صورت وجود هرگونه مشکل پشتیبانی را با خبر کنید.\n\n", reply_markup=(admin_main_menu if user_id == ADMIN_ID else main_menu))
 
 #--- ADMIN ---#
 async def brodcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
