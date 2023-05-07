@@ -717,7 +717,7 @@ def main() -> None:
 
     ok_payment_handler = CallbackQueryHandler(ok_payment, pattern='^ok ')
 
-    none_button_handler = CallbackQueryHandler(none_button, patter='^none$')
+    none_button_handler = CallbackQueryHandler(none_button, pattern='^none$')
     
     # reply_to_user_handler = CallbackQueryHandler(reply_to_user, )
 
