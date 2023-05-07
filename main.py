@@ -605,10 +605,8 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return
     query = update.callback_query
 
-    uid, pid = int(query.data.split()[1].split('-')[0]), int(query.data.split()[1].split('-')[1]) # check
-
     try:
-        uid, pid = int(query.callback_data.split()[1].split('-')[0]), int(query.callback_data.split()[1].split('-')[1])
+        uid, pid = int(query.data.split()[1].split('-')[0]), int(query.data.split()[1].split('-')[1])
     except:
         await context.bot.answer_callback_query(callback_query_id=query.id, text="🔴 خطایی رخ داده است.")
         return
