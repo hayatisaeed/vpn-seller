@@ -605,7 +605,7 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return
     query = update.callback_query
 
-    uid, pid = int(query.callback_data.split()[1].split('-')[0]), int(query.callback_data.split()[1].split('-')[1]) # check
+    uid, pid = int(query.data.split()[1].split('-')[0]), int(query.data.split()[1].split('-')[1]) # check
 
     try:
         uid, pid = int(query.callback_data.split()[1].split('-')[0]), int(query.callback_data.split()[1].split('-')[1])
@@ -643,7 +643,7 @@ async def none_button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 
 # instances
 application = Application.builder().token(TOKEN).build()
-bot = bot = telegram.Bot(token=TOKEN)
+bot = telegram.Bot(token=TOKEN)
 
 def main() -> None:
     # Command & Conversation & CallbackQuery Handlers will take place here.
