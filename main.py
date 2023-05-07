@@ -622,7 +622,8 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     total = user_credit + payment_price
 
     database_handler.editPayment(uid, pid, payment_price) # add the new credit to database
-    
+    database_handler.editUser(uid, 'credit', total)
+
     await context.bot.send_message(chat_id=uid, text=f"✅ تراکنش شما با مشخصات زیر تایید شد.\n\nمبلغ تراکنش: {payment_price} تومان \n شماره پیگیری تراکنش:\n{uid}-{pid}")
     await context.bot.send_message(chat_id=uid, text=f"💰 موجودی جدید شما: {total} تومان")
     buttons = [
