@@ -597,6 +597,46 @@ async def setting_get_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     await context.bot.send_message(chat_id=user_id, text="به زودی انشاءالله", reply_markup=admin_main_menu)
     return ConversationHandler.END
 
+
+async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="شما به این بخش دسترسی ندارید.")
+        return
+    query = update.callback_query
+    try:
+        uid, pid = int(query.callback_data.split()[1].split('-')[0]), int(query.callback_data.split()[1].split('-')[1])
+    except:
+        await context.bot.answer_callback_query(callback_query_id=query.id, text="🔴 خطایی رخ داده است.")
+        return
+    user_data =database_handler.userInfo(uid)
+    user_credit = int(user_data(['credit']))
+    user_is_blocked = user_data['is_blocked']
+
+
+    payment_data = database_handler.getPayment(uid, payment_id=pid)
+    payment_price = int(payment_data['price'])
+
+    total = user_credit + payment_price
+
+    database_handler.editPayment(uid, pid, payment_price) # add the new credit to database
+    
+    await context.bot.send_message(chat_id=uid, text=f"✅ تراکنش شما با مشخصات زیر تایید شد.\n\nشماره پیگیری تراکنش:\n{uid}-{pid}")
+    await context.bot.send_message(chat_id=uid, text=f"💰 موجودی جدید شما: {total} تومان")
+    buttons = [
+        [InlineKeyboardButton('✅️️️️️️️ تراکنش تایید شد', callback_data=f"none")],
+        [InlineKeyboardButton('مسدود کردن کاربر ⛔️' if not user_is_blocked else '🟢 رفع مسدودیت کاربر', callback_data=f"block_user {user_id}")]
+    ]
+    admin_markup = InlineKeyboardMarkup(buttons)
+
+    await context.bot.answer_callback_query(callback_query_id=query.id, text="✅ تراکنش تایید شد")
+    await context.bot.edit_message_reply_markup(chat_id=ADMIN_ID, message_id=query.id, reply_markup=admin_markup)
+    
+async def none_button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    query = update.callback_query
+    await context.bot.answer_callback_query(callback_query_id=query.id, text="این دکمه هیچ کاری نمیکنه 😅")
+
 # instances
 application = Application.builder().token(TOKEN).build()
 bot = bot = telegram.Bot(token=TOKEN)
@@ -663,7 +703,7 @@ def main() -> None:
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
     show_user_list_handler = MessageHandler(filters.Regex('^🧾 لیست کاربران$'), show_user_list)
 
-    connection_handler = MessageHandler(filters.Regex('^آموزش اتصال&'), not_yet)
+    connection_handler = MessageHandler(filters.Regex('^آموزش اتصال$'), not_yet)
 
     help_handler = MessageHandler(filters.Regex('^راهنمای بات$'), not_yet)
 
@@ -672,6 +712,12 @@ def main() -> None:
     hamkar_plan_handler = MessageHandler(filters.Regex('^🤝 پلن همکار$'), not_yet)
 
     payment_history_handler = MessageHandler(filters.Regex('^📆 تاریخچه‌ی پرداخت‌ها$'), not_yet)
+
+    my_services_handler = MessageHandler(filters.Regex('^🛡 سرویس‌های من$'), not_yet)
+
+    ok_payment_handler = CallbackQueryHandler(ok_payment, pattern='^ok ')
+
+    none_button_handler = CallbackQueryHandler(none_button, patter='^none$')
     
     # reply_to_user_handler = CallbackQueryHandler(reply_to_user, )
 
@@ -691,6 +737,8 @@ def main() -> None:
     application.add_handler(user_commission_handler)
     application.add_handler(hamkar_plan_handler)
     application.add_handler(payment_history_handler)
+    application.add_handler(ok_payment_handler)
+    application.add_handler(none_button_handler)
 
 
     # Start the bot

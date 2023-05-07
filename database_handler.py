@@ -91,16 +91,22 @@ def newPayment(user_id, payment_id, price, status = "waiting"):
         json.dump(data, f)
     return 1
 
-def getPayment(user_id):
+def getPayment(user_id, payment_id=0):
     try:
         with open('data/payments.json', 'r') as f:
             data = json.load(f)
             if data[str(user_id)] == {}:
                 return []
             else:
-                return data[str(user_id)]
+                if payment_id != 0:
+                    return data[str(user_id)][str(payment_id)]
+                else:
+                    return data[str(user_id)]
     except:
         return []
+
+def editPayment(user_id, payment_id, price, status="waiting"):
+    pass
 
 def getPackages():
     with open('data/packages.json', 'r') as f:
