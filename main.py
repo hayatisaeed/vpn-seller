@@ -39,7 +39,8 @@ SEND_SUPPORT_MESSAGE = 0
 # keyboards:
 main_menu_keyboard = [
     ['خرید سرویس 🛒', 'دریافت تست'],
-    ['پیام به پشتیبانی 👨‍💻', '➕ افزایش موجودی'],
+    ['💳 کارت هدیه', '➕ افزایش موجودی'],
+    ['پیام به پشتیبانی 👨‍💻'],
     ['آموزش اتصال', 'راهنمای بات'],
     ['🛡 سرویس‌های من', 'ℹ️ اطلاعات حساب'],
     ['👤 زیر مجموعه گیری', '🤝 پلن همکار'],
@@ -198,7 +199,7 @@ async def get_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     user_is_blocked = database_handler.userInfo(user_id)['is_blocked']
     if user_is_blocked:
-        await context.bot.send_message(chat_id=user_id, text="⛔️ شما بلاک شده اید. نمیتوانید به پشتیبانی پیام ارسال کنید.")
+        await context.bot.send_message(chat_id=user_id, text="⛔️ شما بلاک شده اید. نمیتوانید به پشتیبانی پیام ارسال کنید.", reply_markup=main_menu)
         return ConversationHandler.END
 
     await update.message.reply_text('شما در حال ارسال پیام به پشتیبانی هستید. لطفا متن پیام خود را بنویسید. \n', reply_markup=cancel_markup)
@@ -671,7 +672,7 @@ async def deny_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     await context.bot.send_message(chat_id=uid, text=f"❌ تراکنش پرداختی شما با مشخصات زیر رد شد.\n\n\nمبلغ: {[payment_price]}\n\n🆔 شماره پیگیری:\n{uid}-{pid}")
     buttons = [
         [InlineKeyboardButton('❌ تراکنش رد شد.', callback_data=f"none")],
-        [InlineKeyboardButton('مسدود کردن کاربر ⛔️' if not user_is_blocked else '🟢 رفع مسدودیت کاربر', callback_data=f"block_user {user_id}")]
+        [InlineKeyboardButton('مسدود کردن کاربر ⛔️' if not user_is_blocked else '🟢 رفع مسدودیت کاربر', callback_data=f"block_user {uid}")]
     ]
     admin_markup = InlineKeyboardMarkup(buttons)
 
