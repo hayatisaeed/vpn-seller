@@ -793,7 +793,7 @@ def main() -> None:
 
     none_button_handler = CallbackQueryHandler(none_button, pattern='^none$')
 
-    block_unblock_button_handler = CallbackQueryHandler(block_unblock_button, pattern="^(block | unblock )")
+    block_unblock_button_handler = CallbackQueryHandler(block_unblock_button, pattern="^block_user ")
     
     # reply_to_user_handler = CallbackQueryHandler(reply_to_user, )
 
