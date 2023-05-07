@@ -612,7 +612,7 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return
 
     user_data =database_handler.userInfo(uid)
-    user_credit = int(user_data(['credit']))
+    user_credit = int(user_data['credit'])
     user_is_blocked = user_data['is_blocked']
 
 
