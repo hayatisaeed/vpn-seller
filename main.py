@@ -617,6 +617,9 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
     payment_data = database_handler.getPayment(uid, payment_id=pid)
+    if payment_data['status'] == 'ok':
+        await context.bot.answer_callback_query(callback_query_id=query.id, text="تراکنش قبلا تایید شده است.")
+        return
     payment_price = int(payment_data['price'])
 
     total = user_credit + payment_price
@@ -633,7 +636,7 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     admin_markup = InlineKeyboardMarkup(buttons)
 
     await context.bot.answer_callback_query(callback_query_id=query.id, text="✅ تراکنش تایید شد")
-    await context.bot.edit_message_reply_markup(chat_id=ADMIN_ID, message_id=query.id, reply_markup=admin_markup)
+    await context.bot.edit_message_reply_markup(chat_id=ADMIN_ID, message_id=update.message.message_id, reply_markup=admin_markup)
     
 async def none_button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
