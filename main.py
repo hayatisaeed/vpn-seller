@@ -195,11 +195,18 @@ async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
 async def get_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
+
+    user_is_blocked = database_handler.userInfo(user_id)['is_blocked']
+    if user_is_blocked:
+        await context.bot.send_message(chat_id=user_id, text="⛔️ شما بلاک شده اید. نمیتوانید به پشتیبانی پیام ارسال کنید.")
+        return ConversationHandler.END
+
     await update.message.reply_text('شما در حال ارسال پیام به پشتیبانی هستید. لطفا متن پیام خود را بنویسید. \n', reply_markup=cancel_markup)
     return SEND_SUPPORT_MESSAGE
-
 async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
+
+
     markup = ReplyKeyboardMarkup(main_menu_keyboard)
     buttons = [
         [InlineKeyboardButton('🔴مسدود کردن کاربر', callback_data=f"block_user {user_id}")]
@@ -630,18 +637,82 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await context.bot.send_message(chat_id=uid, text=f"✅ تراکنش شما با مشخصات زیر تایید شد.\n\nمبلغ تراکنش: {payment_price} تومان \n شماره پیگیری تراکنش:\n{uid}-{pid}")
     await context.bot.send_message(chat_id=uid, text=f"💰 موجودی جدید شما: {total} تومان")
     buttons = [
-        [InlineKeyboardButton('✅️️️️️️️ تراکنش تایید شد', callback_data=f"none")],
-        [InlineKeyboardButton('مسدود کردن کاربر ⛔️' if not user_is_blocked else '🟢 رفع مسدودیت کاربر', callback_data=f"block_user {user_id}")]
+        [InlineKeyboardButton('✅️️️️️️️ تراکنش تایید شد', callback_data=f"none")]
     ]
     admin_markup = InlineKeyboardMarkup(buttons)
 
     await context.bot.answer_callback_query(callback_query_id=query.id, text="✅ تراکنش تایید شد")
     await query.edit_message_reply_markup(reply_markup=admin_markup)
-    
+
+
+async def deny_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="شما به این بخش دسترسی ندارید.")
+        return
+    query = update.callback_query
+
+
+    try:
+        uid, pid = int(query.data.split()[1].split('-')[0]), int(query.data.split()[1].split('-')[1])
+    except:
+        await context.bot.answer_callback_query(callback_query_id=query.id, text="🔴 خطایی رخ داده است.")
+        return
+
+    user_data =database_handler.userInfo(uid)
+    user_is_blocked = user_data['is_blocked']
+
+    payment_data = database_handler.getPayment(uid, payment_id=pid)
+    if payment_data['status'] == 'denied':
+        await context.bot.answer_callback_query(callback_query_id=query.id, text="تراکنش قبلا رد شده است.")
+        return
+    payment_price = int(payment_data['price'])
+
+    database_handler.editPayment(uid, pid, payment_price, status="denied")
+
+    await context.bot.send_message(chat_id=uid, text=f"❌ تراکنش پرداختی شما با مشخصات زیر رد شد.\n\n\nمبلغ: {[payment_price]}\n\n🆔 شماره پیگیری:\n{uid}-{pid}")
+
+    await context.bot.send_message(chat_id=uid, text=f"✅ تراکنش شما با مشخصات زیر تایید شد.\n\nمبلغ تراکنش: {payment_price} تومان \n شماره پیگیری تراکنش:\n{uid}-{pid}")
+    await context.bot.send_message(chat_id=uid, text=f"💰 موجودی جدید شما: {total} تومان")
+    buttons = [
+        [InlineKeyboardButton('❌ تراکنش رد شد.', callback_data=f"none")],
+        [InlineKeyboardButton('مسدود کردن کاربر ⛔️' if not user_is_blocked else '🟢 رفع مسدودیت کاربر', callback_data=f"block_user {user_id}")]
+    ]
+    admin_markup = InlineKeyboardMarkup(buttons)
+
+    await context.bot.answer_callback_query(callback_query_id=query.id, text="❌ تراکنش رد شد.")
+    await query.edit_message_reply_markup(reply_markup=admin_markup)
+
+
+
 async def none_button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     query = update.callback_query
     await context.bot.answer_callback_query(callback_query_id=query.id, text="این دکمه هیچ کاری نمیکنه 😅")
+
+async def block_unblock_button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    try:
+        user_id = update.effective_user.id
+        query = update.callback_query
+        uid = query.data.split()[1]
+        if user_id != ADMIN_ID:
+            await context.bot.answer_callback_query(callback_query_id=query.id, text="You Can\'t do this.")
+            return
+        user_data = database_handler.userInfo(uid)
+        user_is_blocked = user_data['is_blocked']
+        if user_is_blocked:
+            await context.bot.answer_callback_query(callback_query_id=query.id, text="🟢 کاربر رفع مسدودیت شد.")
+            database_handler.editUser(uid, 'is_blocked', 0)
+        else:
+            await context.bot.answer_callback_query(callback_query_id=query.id, text="🔴 کاربر مسدود شد.")
+            database_handler.editUser(uid, 'is_blocked', 1)
+        msg = f"{'شما از بلاک بودن خارج شدید و میتوانید به پشتیبانی پیام ارسال کنید ✅' if user_is_blocked else 'شما توسط ادمین بلاک شده اید. دیگر نمیتوانید به پشتیبانی پیام ارسال کنید ⛔️'}"
+        await context.bot.send_message(chat_id=uid, text=msg)
+    except:
+        await context.bot.answer_callback_query(callback_query_id=query.id, text="خطایی در حین انجام عملیات رخ داده است.")
+
+
+
 
 # instances
 application = Application.builder().token(TOKEN).build()
@@ -723,7 +794,11 @@ def main() -> None:
 
     ok_payment_handler = CallbackQueryHandler(ok_payment, pattern='^ok ')
 
+    deny_payment_handler = CallbackQueryHandler(deny_payment, pattern='^deny ')
+
     none_button_handler = CallbackQueryHandler(none_button, pattern='^none$')
+
+    block_unblock_button_handler = CallbackQueryHandler(block_unblock_button, pattern="^(block | unblock )")
     
     # reply_to_user_handler = CallbackQueryHandler(reply_to_user, )
 
@@ -744,7 +819,10 @@ def main() -> None:
     application.add_handler(hamkar_plan_handler)
     application.add_handler(payment_history_handler)
     application.add_handler(ok_payment_handler)
+    application.add_handler(deny_payment_handler)
     application.add_handler(none_button_handler)
+    application.add_handler(block_unblock_button_handler)
+
 
 
     # Start the bot
