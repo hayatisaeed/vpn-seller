@@ -105,8 +105,16 @@ def getPayment(user_id, payment_id=0):
     except:
         return []
 
-def editPayment(user_id, payment_id, price, status="waiting"):
-    pass
+def editPayment(user_id, payment_id, price, status="ok"):
+    try:
+        with open('data/payments.json', 'r') as f:
+            data = json.load(f)
+        data[str(user_id)][str(payment_id)] = {"status": status, "price": price}
+        with open('data/payments.json', 'w') as f:
+            json.dump(data, f)
+        return 1
+    except:
+        return 0
 
 def getPackages():
     with open('data/packages.json', 'r') as f:

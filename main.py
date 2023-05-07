@@ -609,6 +609,9 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     except:
         await context.bot.answer_callback_query(callback_query_id=query.id, text="🔴 خطایی رخ داده است.")
         return
+    
+    uid, pid = int(query.callback_data.split()[1].split('-')[0]), int(query.callback_data.split()[1].split('-')[1]) # check
+
     user_data =database_handler.userInfo(uid)
     user_credit = int(user_data(['credit']))
     user_is_blocked = user_data['is_blocked']
@@ -621,7 +624,7 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     database_handler.editPayment(uid, pid, payment_price) # add the new credit to database
     
-    await context.bot.send_message(chat_id=uid, text=f"✅ تراکنش شما با مشخصات زیر تایید شد.\n\nشماره پیگیری تراکنش:\n{uid}-{pid}")
+    await context.bot.send_message(chat_id=uid, text=f"✅ تراکنش شما با مشخصات زیر تایید شد.\n\nمبلغ تراکنش: {payment_price} تومان \n شماره پیگیری تراکنش:\n{uid}-{pid}")
     await context.bot.send_message(chat_id=uid, text=f"💰 موجودی جدید شما: {total} تومان")
     buttons = [
         [InlineKeyboardButton('✅️️️️️️️ تراکنش تایید شد', callback_data=f"none")],
