@@ -604,13 +604,14 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await context.bot.send_message(chat_id=user_id, text="شما به این بخش دسترسی ندارید.")
         return
     query = update.callback_query
+
+    uid, pid = int(query.callback_data.split()[1].split('-')[0]), int(query.callback_data.split()[1].split('-')[1]) # check
+
     try:
         uid, pid = int(query.callback_data.split()[1].split('-')[0]), int(query.callback_data.split()[1].split('-')[1])
     except:
         await context.bot.answer_callback_query(callback_query_id=query.id, text="🔴 خطایی رخ داده است.")
         return
-    
-    uid, pid = int(query.callback_data.split()[1].split('-')[0]), int(query.callback_data.split()[1].split('-')[1]) # check
 
     user_data =database_handler.userInfo(uid)
     user_credit = int(user_data(['credit']))
