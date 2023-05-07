@@ -643,8 +643,6 @@ async def ok_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await context.bot.answer_callback_query(callback_query_id=query.id, text="✅ تراکنش تایید شد")
     await query.edit_message_reply_markup(reply_markup=admin_markup)
-
-
 async def deny_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     if user_id != ADMIN_ID:
@@ -671,9 +669,6 @@ async def deny_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     database_handler.editPayment(uid, pid, payment_price, status="denied")
 
     await context.bot.send_message(chat_id=uid, text=f"❌ تراکنش پرداختی شما با مشخصات زیر رد شد.\n\n\nمبلغ: {[payment_price]}\n\n🆔 شماره پیگیری:\n{uid}-{pid}")
-
-    await context.bot.send_message(chat_id=uid, text=f"✅ تراکنش شما با مشخصات زیر تایید شد.\n\nمبلغ تراکنش: {payment_price} تومان \n شماره پیگیری تراکنش:\n{uid}-{pid}")
-    await context.bot.send_message(chat_id=uid, text=f"💰 موجودی جدید شما: {total} تومان")
     buttons = [
         [InlineKeyboardButton('❌ تراکنش رد شد.', callback_data=f"none")],
         [InlineKeyboardButton('مسدود کردن کاربر ⛔️' if not user_is_blocked else '🟢 رفع مسدودیت کاربر', callback_data=f"block_user {user_id}")]
