@@ -138,7 +138,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         context.chat_data['message_id'] = msg.message_id
         return
     
-    if database_handler.newUser(user_id):
+    if database_handler.newUser(user_id, user_name=update.effective_user.username):
         await context.bot.send_message(chat_id=user_id, text="سلام! به فروشگاه ما خوش اومدید! میتونید با استفاده از گزینه های زیر از امکانات بات استفاده کنید:", reply_markup=(main_menu if user_id != ADMIN_ID else admin_main_menu))
         if user_id != ADMIN_ID:
             buttons = [
@@ -573,9 +573,9 @@ async def show_user_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if i == "number_of_users":
             continue
         if data[i]['is_hamkar'] == 1:
-            hamkar_msg += f"👉 ```{i}``` -> @{ data[i]['username'] }\n"
+            hamkar_msg += f"👉 `{i}`   ->    { data[i]['username'] }\n"
         else:
-            normal_msg += f"👉 ```{i}``` -> @{ data[i]['username'] }\n"
+            normal_msg += f"👉 `{i}`   ->    { data[i]['username'] }\n"
     
     await context.bot.send_message(chat_id=user_id, text=hamkar_msg, reply_markup=admin_main_menu)
     await context.bot.send_message(chat_id=user_id, text=normal_msg, reply_markup=admin_main_menu)
