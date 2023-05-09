@@ -723,7 +723,7 @@ async def admin_send_config(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     packages = database_handler.getPackages()
     keyboard = []
     for package in packages:
-        if len(keyboard) > 0 and len(keyboard[-1] == 1):
+        if len(keyboard) > 0 and len(keyboard[-1]) == 1:
             keyboard[-1].append(str(package))
         else:
             keyboard.append([str(package)])
@@ -742,7 +742,7 @@ async def send_config_set_plan(update: Update, context: ContextTypes.DEFAULT_TYP
     if plan not in packages:
         keyboard = []
         for package in packages:
-            if len(keyboard) > 0 and len(keyboard[-1] == 1):
+            if len(keyboard) > 0 and len(keyboard[-1]) == 1:
                 keyboard[-1].append(str(package))
             else:
                 keyboard.append([str(package)])
