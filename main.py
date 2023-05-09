@@ -844,6 +844,8 @@ def main() -> None:
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
     show_user_list_handler = MessageHandler(filters.Regex('^🧾 لیست کاربران$'), show_user_list)
 
+    show_stats_handler = MessageHandler(filters.Regex('^📊 آمار$'), not_yet)
+
     connection_handler = MessageHandler(filters.Regex('^آموزش اتصال$'), not_yet)
 
     help_handler = MessageHandler(filters.Regex('^راهنمای بات$'), not_yet)
@@ -887,6 +889,7 @@ def main() -> None:
     application.add_handler(none_button_handler)
     application.add_handler(block_unblock_button_handler)
     application.add_handler(admin_send_configs_conv_handler)
+    application.add_handler(show_stats_handler)
 
 
 

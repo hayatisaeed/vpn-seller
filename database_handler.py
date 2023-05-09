@@ -35,7 +35,7 @@ def editUser(user_id, key, val):
 def getUsers(user_type="All"): # available types: All, Hamkar, Normal
     with open('data/users.json', 'r') as f:
         data = json.load(f)
-        result = []
+        result = {}
         if user_type == "All":
             for i in data:
                 if i == "number_of_users":
