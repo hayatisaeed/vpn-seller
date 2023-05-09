@@ -121,3 +121,41 @@ def getPackages():
         data = json.load(f)
     return data
 
+
+def addConfigs(package_id, config_id):
+    try:
+        with open('data/configs.json', 'r') as f:
+            data = json.load(f)
+        data[str(package_id)].append(config_id)
+        with open('data/configs.json', 'w') as f:
+            json.dump(data, f)
+        return 'Done'
+    except:
+        return 'Error'
+
+
+def removeAllConfigs(package_id):
+    try:
+        with open('data/configs.json', 'r') as f:
+            data = json.load(f)
+        data[str(package_id)].clear()
+        with open('data/configs.json', 'w') as f:
+            json.dump(data, f)
+        return True
+    except:
+        return 'Error'
+
+
+def getConfig(package_id, user_id):
+    with open('data/configs.json', 'r') as f:
+        data = json.load(f)
+    try:
+        if len(data[str(package_id)]["available"]) == 0:
+            return 'NoConfig'
+        config_id = data[str(package_id)]["available"].pop(0)
+        data[str(package_id)]['sold'][str(config_id)] = user_id
+        with open('data/configs.json', 'w') as f:
+            json.dump(data, f)
+        return config_id
+    except:
+        return 'Error'

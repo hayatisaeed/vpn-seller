@@ -1,6 +1,9 @@
 {
     "package_id": {
-        "sold": ["message_id of configs"],
+
+        "sold": {
+            "message_id of config": "owner"
+        },
         "available": []
     }
 }

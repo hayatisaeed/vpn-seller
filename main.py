@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 TOKEN = "6126767405:AAH4B-wx0ckT6NoMPp6pA3lGoGAU-DxEC9Q" # 6126767405:AAH4B-wx0ckT6NoMPp6pA3lGoGAU-DxEC9Q
 ADMIN_ID = 1767064220 # integer
 CHANNEL_ID = '@kard_vpn_test' # string, public id
+CHANNEL_LINK = "https://t.me/kard_vpn_test"
 
 # Constants:
 CHOOSING = range(1)
@@ -129,11 +130,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     if not await member_check(update, context):
         keyboard = [
-            [InlineKeyboardButton('عضویت در کانال', url=f"https://t.me/{CHANNEL_ID[1:]}")],
+            [InlineKeyboardButton('عضویت در کانال', url=CHANNEL_LINK)],
             [InlineKeyboardButton('عضو شدم ✅', callback_data='joined')]
         ]
         markup = InlineKeyboardMarkup(keyboard)
-        msg = await update.message.reply_text(f'برای استفاده از خدمات بات باید در کانال ما عضو باشید\n{CHANNEL_ID}', reply_markup=markup)
+        msg = await update.message.reply_text(f'برای استفاده از خدمات بات باید در کانال ما عضو باشید\n{CHANNEL_ID}\n\n{CHANNEL_LINK}', reply_markup=markup)
         context.chat_data['message_id'] = msg.message_id
         return
     
@@ -232,7 +233,13 @@ async def send_support_message(update: Update, context: ContextTypes.DEFAULT_TYP
 
 async def user_charge_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    user_credit = 10 # update by db
+
+    user_is_blocked = database_handler.userInfo(user_id)['is_blocked']
+    if user_is_blocked:
+        await context.bot.send_message(chat_id=user_id, text="⛔️ شما توسط ادمین بلاک شده اید. نمیتوانید از این بخش استفاده کنید.", reply_markup=main_menu)
+        return ConversationHandler.END
+
+    user_credit = int(database_handler.userInfo(user_id)['credit'])
     keyboard = [
         ['20000', '30000', '40000', '50000'],
         ['60000', '70000', '80000', '90000'],
@@ -708,6 +715,58 @@ async def block_unblock_button(update: Update, context: ContextTypes.DEFAULT_TYP
         await context.bot.answer_callback_query(callback_query_id=query.id, text="خطایی در حین انجام عملیات رخ داده است.")
 
 
+async def admin_send_config(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        await context.bot.send_message(chat_id=user_id, text="Error.", reply_markup=main_menu)
+        return ConversationHandler.END
+    packages = database_handler.getPackages()
+    keyboard = []
+    for package in packages:
+        if len(keyboard[-1]) == 1:
+            keyboard[-1].append(str(package))
+        else:
+            keyboard.append([str(package)])
+    keyboard.append(['🔙 انصراف و بازگشت'])
+    markup = ReplyKeyboardMarkup(keyboard)
+    if len(keyboard) == 1:
+        await context.bot.send_message(chat_id=user_id, text="شما هنوز پلنی اضافه نکردید. ابتدا از تنظیمات پلن جدید اضافه کنید.", reply_markup=admin_main_menu)
+        return ConversationHandler.END
+    else:
+        await context.bot.send_message(chat_id=user_id, text="📤 برای ارسال کانفیگ‌ها، ابتدا پلن مورد نظر خود را انتخاب کنید:", reply_markup=markup)
+        return 'SET_PLAN'
+async def send_config_set_plan(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    packages = database_handler.getPackages()
+    plan = update.message.text
+    if plan not in packages:
+        keyboard = []
+        for package in packages:
+            if len(keyboard[-1]) == 1:
+                keyboard[-1].append(str(package))
+            else:
+                keyboard.append([str(package)])
+        keyboard.append(['🔙 انصراف و بازگشت'])
+        markup = ReplyKeyboardMarkup(keyboard)
+        await context.bot.send_message(chat_id=user_id, text="این آیدی پیدا نشد. لطفا آیدی خود را از گزینه های زیر انتخاب کنید:", reply_markup=markup)
+        return 'SET_PLAN'
+    context.user_data['plan'] = plan
+    keyboard = [
+        ['END']
+    ]
+    markup = ReplyKeyboardMarkup(keyboard)
+    await context.bot.send_message(chat_id=user_id, text=f"خب اوکی. کانفیگایی که میخوای برای دسته‌ی {plan} بفرستی رو بفرست. در آخر کلمه‌ی END رو برام بفرست.", reply_markup=markup)
+    return 'GET_CONFIGS'
+async def get_configs(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    if update.message.text == 'END':
+        await context.bot.send_message(chat_id=user_id, text="دریافت شد.", reply_markup=admin_main_menu)
+        return ConversationHandler.END
+    package_id = context.user_data['plan']
+    config_id = update.message.message_id
+    database_handler.addConfigs(package_id, config_id)
+    return 'GET_CONFIGS'
+
 
 
 # instances
@@ -773,6 +832,16 @@ def main() -> None:
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
 
+    admin_send_configs_conv_handler = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex('^ارسال کانفیگ$'), admin_send_config)],
+        states={
+            'SET_PLAN': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, send_config_set_plan)],
+            'GET_NUMBER_OF_CONFIGS': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, send_config_get_num)],
+            'GET_CONFIGS': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, get_configs)]
+        },
+        fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
+    )
+
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
     show_user_list_handler = MessageHandler(filters.Regex('^🧾 لیست کاربران$'), show_user_list)
 
@@ -818,6 +887,7 @@ def main() -> None:
     application.add_handler(deny_payment_handler)
     application.add_handler(none_button_handler)
     application.add_handler(block_unblock_button_handler)
+    application.add_handler(admin_send_configs_conv_handler)
 
 
 
