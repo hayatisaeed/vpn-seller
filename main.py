@@ -565,11 +565,13 @@ async def show_user_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if user_id != ADMIN_ID:
         await context.bot.send_message(chat_id=user_id, text="⛔️ شما ادمین نیستید. \n دسترسی به این بخش برای شما غیر مجاز است.", reply_markup=main_menu)
         return
-    data = database_handler.getUsers("All")
+    data = database_handler.getUsers()
     hamkar_msg = '🤝 لیست همکاران به شرح زیر است:\n\n'
     normal_msg = '👤 لیست کاربران عادی به شرح زیر است: \n\n'
 
     for i in data:
+        if i == "number_of_users":
+            continue
         if data[i]['is_hamkar'] == 1:
             hamkar_msg += f"👉 ```{i}``` -> @{ data[i]['user_name'] }\n"
         else:
