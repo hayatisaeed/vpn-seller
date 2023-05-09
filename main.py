@@ -836,7 +836,6 @@ def main() -> None:
         entry_points=[MessageHandler(filters.Regex('^ارسال کانفیگ$'), admin_send_config)],
         states={
             'SET_PLAN': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, send_config_set_plan)],
-            'GET_NUMBER_OF_CONFIGS': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, send_config_get_num)],
             'GET_CONFIGS': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, get_configs)]
         },
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
