@@ -138,7 +138,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         context.chat_data['message_id'] = msg.message_id
         return
     
-    if database_handler.newUser(user_id, user_name=update.effective_user.username):
+    if database_handler.newUser(user_id, user_name=f"@{update.effective_user.username}"):
         await context.bot.send_message(chat_id=user_id, text="سلام! به فروشگاه ما خوش اومدید! میتونید با استفاده از گزینه های زیر از امکانات بات استفاده کنید:", reply_markup=(main_menu if user_id != ADMIN_ID else admin_main_menu))
         if user_id != ADMIN_ID:
             buttons = [
