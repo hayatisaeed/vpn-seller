@@ -19,6 +19,7 @@ from telegram import ChatMember
 import datetime
 import prettytable as pt
 import database_handler
+import shutil
 
 # Enable logging
 logging.basicConfig(
@@ -614,9 +615,13 @@ async def setting_get_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     if cmd == '💡روشن / خاموش 🔴':
         return 'TURN_OFF'
     if cmd == '🔋 بکاپ دیتابیس':
-        # update: send databases in one zip file
         await context.bot.send_message(chat_id=user_id, text="⚙️ تنظیمات ربات: ", reply_markup=bot_setting_markup)
-        return 'DB_BACKUP'
+        backup_name = f'backup-{datetime.datetime.now().year}-{datetime.datetime.now().month}-{datetime.datetime.now().day}.zip'
+        shutil.make_archive(f'db_backup/{backup_name}', 'zip', 'data')
+        context.bot.send_document(chat_id=user_id, document=f'db_backup/{backup_name}', filename=backup_name, caption=backup_name)
+        context.bot.send_message(chat_id=user_id, text="انجام شد! دیگه چه امری داری؟", reply_markup=bot_setting_markup)
+        return 'GET_COMMAND'
+
     if cmd == '📦 پلن ها':
         pass
     await context.bot.send_message(chat_id=user_id, text="به زودی انشاءالله", reply_markup=admin_main_menu)
@@ -696,8 +701,13 @@ async def deny_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     await context.bot.answer_callback_query(callback_query_id=query.id, text="❌ تراکنش رد شد.")
     await query.edit_message_reply_markup(reply_markup=admin_markup)
 
-
-
+async def get_db_backup(update, context):
+    user_id = update.effective_user.id
+    if user_id != ADMIN_ID:
+        context.bot.send_message(chat_id=user_id, text="دسترسی غیر مجاز", reply_markup=main_menu)
+        return ConversationHandler.END
+    else:
+        pass
 async def none_button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     query = update.callback_query

@@ -98,10 +98,10 @@ def editPayment(user_id, payment_id, price, status="ok"):
     except:
         return 0
 
-def getPackages():
+def getPackages(category="vpn"):
     with open('data/packages.json', 'r') as f:
         data = json.load(f)
-    return data
+    return data[category]
 
 
 def addConfigs(package_id, config_id):
@@ -141,3 +141,4 @@ def getConfig(package_id, user_id):
         return config_id
     except:
         return 'Error'
+
