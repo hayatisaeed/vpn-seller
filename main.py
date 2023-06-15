@@ -619,7 +619,8 @@ async def setting_get_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         backup_name = f'backup-{datetime.datetime.now().year}-{datetime.datetime.now().month}-{datetime.datetime.now().day}.zip'
         shutil.make_archive(f'db_backup/{backup_name}', 'zip', 'data')
         await context.bot.send_message(chat_id=user_id, text="بکاپ ایجاد شد. در حال ارسال فایل زیپ به شما ...")
-        await context.bot.send_document(chat_id=user_id, document=f'db_backup/{backup_name}', filename=backup_name, caption=backup_name)
+        with open(f'db_backup/{backup_name}', 'rb') as f:
+            await context.bot.send_document(chat_id=user_id, document=f, filename=backup_name, caption=backup_name)
         await context.bot.send_message(chat_id=user_id, text="انجام شد! دیگه چه امری داری؟", reply_markup=bot_setting_markup)
         return 'GET_COMMAND'
 
