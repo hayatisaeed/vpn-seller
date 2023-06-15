@@ -80,6 +80,12 @@ bot_setting_keyboard = [
 ]
 bot_setting_markup = ReplyKeyboardMarkup(bot_setting_keyboard, one_time_keyboard=True)
 
+admin_manage_plans_keyboard = [
+    ['➕ افزودن پلن', '✖️ حذف پلن'],
+    ['🔙 انصراف و بازگشت']
+]
+admin_manage_plans_markup = ReplyKeyboardMarkup(admin_manage_plans_markup, one_time_keyboard=True)
+
 setting_commission_keyboard = [
     ['کارمزد استارت', 'درصد از خرید'],
     ['لیست استثنا', '👤 کمیسیونرها'],
@@ -611,6 +617,8 @@ async def setting_get_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         # update: send databases in one zip file
         await context.bot.send_message(chat_id=user_id, text="⚙️ تنظیمات ربات: ", reply_markup=bot_setting_markup)
         return 'DB_BACKUP'
+    if cmd == '📦 پلن ها':
+        pass
     await context.bot.send_message(chat_id=user_id, text="به زودی انشاءالله", reply_markup=admin_main_menu)
     return ConversationHandler.END
 
@@ -825,8 +833,9 @@ def main() -> None:
         entry_points=[MessageHandler(filters.Regex('^⚙️ تنظیمات ربات$'), show_setting)],
         states={
             'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, setting_get_command)],
-            'COMMISSION': [],
+            'COMMISSION': [], 
             'TEST_CONFIG': [],
+            'SET_PLANS': [MessageHandler(~filters.Regex('^📦 پلن ها$') & filters.TEXT, setting_get_command)],
             'CHANNELS': [],
             'TURN_OFF': [],
             'DB_BACKUP': []
