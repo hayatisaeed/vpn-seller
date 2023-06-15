@@ -616,7 +616,7 @@ async def setting_get_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         return 'TURN_OFF'
     if cmd == '🔋 بکاپ دیتابیس':
         await context.bot.send_message(chat_id=user_id, text="در حال ایجاد بکاپ از دیتابیس ...", reply_markup=bot_setting_markup)
-        backup_name = f'backup-{datetime.datetime.now().year}-{datetime.datetime.now().month}-{datetime.datetime.now().day}.zip'
+        backup_name = f'backup-{datetime.datetime.now().year}-{datetime.datetime.now().month}-{datetime.datetime.now().day}'
         shutil.make_archive(f'db_backup/{backup_name}', 'zip', 'data')
         await context.bot.send_message(chat_id=user_id, text="بکاپ ایجاد شد. در حال ارسال فایل زیپ به شما ...")
         with open(f'db_backup/{backup_name}', 'rb') as f:
