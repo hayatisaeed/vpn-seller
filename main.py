@@ -84,7 +84,7 @@ admin_manage_plans_keyboard = [
     ['➕ افزودن پلن', '✖️ حذف پلن'],
     ['🔙 انصراف و بازگشت']
 ]
-admin_manage_plans_markup = ReplyKeyboardMarkup(admin_manage_plans_markup, one_time_keyboard=True)
+admin_manage_plans_markup = ReplyKeyboardMarkup(admin_manage_plans_keyboard, one_time_keyboard=True)
 
 setting_commission_keyboard = [
     ['کارمزد استارت', 'درصد از خرید'],
@@ -835,7 +835,7 @@ def main() -> None:
             'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, setting_get_command)],
             'COMMISSION': [], 
             'TEST_CONFIG': [],
-            'SET_PLANS': [MessageHandler(~filters.Regex('^📦 پلن ها$') & filters.TEXT, setting_get_command)],
+            'SET_PLANS': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, setting_get_command)],
             'CHANNELS': [],
             'TURN_OFF': [],
             'DB_BACKUP': []
