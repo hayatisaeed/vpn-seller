@@ -852,7 +852,7 @@ def main() -> None:
             'TURN_OFF': [],
             'DB_BACKUP': []
         },
-        fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
+        fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$') & filters.COMMAND, back_to_main_menu)]
     )
 
     admin_send_configs_conv_handler = ConversationHandler(
@@ -892,7 +892,7 @@ def main() -> None:
     # reply_to_user_handler = CallbackQueryHandler(reply_to_user, )
 
     # add handlers to the application
-    application.add_handler(start_handler, 1)
+    application.add_handler(start_handler, 100)
     application.add_handler(joined_handler, 2)
     application.add_handler(show_info_message_handler, 3)
     application.add_handler(send_support_message_conv_handler, 4)
