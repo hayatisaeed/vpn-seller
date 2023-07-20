@@ -142,3 +142,7 @@ def getConfig(package_id, user_id):
     except:
         return 'Error'
 
+def getBotInfo():
+    with open('data/bot.json', 'r') as f:
+        data = json.load(f)
+    return data

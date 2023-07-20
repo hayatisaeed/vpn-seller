@@ -3,16 +3,6 @@ import logging
 from typing import Dict
 import telegram
 from telegram import *
-# from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ParseMode
-# from telegram.ext import (
-#     Application,
-#     CommandHandler,
-#     CallbackQueryHandler,
-#     ContextTypes,
-#     ConversationHandler,
-#     MessageHandler,
-#     filters
-# )
 from telegram import *
 from telegram.ext import *
 from telegram import ChatMember
@@ -27,12 +17,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Getting Bot info from bot.json
+BOT_DATA = database_handler.getBotInfo()
+TOKEN = BOT_DATA['bot_token']
+ADMIN_ID = BOT_DATA['admin_id']
+CHANNEL_ID = BOT_DATA['channel_id']
+CHANNEL_LINK = BOT_DATA['channel_link']
 
-# replace with your own
-TOKEN = "6126767405:AAH4B-wx0ckT6NoMPp6pA3lGoGAU-DxEC9Q" # 6126767405:AAH4B-wx0ckT6NoMPp6pA3lGoGAU-DxEC9Q
-ADMIN_ID = 1767064220 # integer
-CHANNEL_ID = '@kard_vpn_test' # string, public id
-CHANNEL_LINK = "https://t.me/kard_vpn_test"
+# # replace with your own
+# TOKEN = "6126767405:AAH4B-wx0ckT6NoMPp6pA3lGoGAU-DxEC9Q" # 6126767405:AAH4B-wx0ckT6NoMPp6pA3lGoGAU-DxEC9Q
+# ADMIN_ID = 1767064220 # integer
+# CHANNEL_ID = '@kard_vpn_test' # string, public id
+# CHANNEL_LINK = "https://t.me/kard_vpn_test"
 
 # Constants:
 CHOOSING = range(1)
@@ -795,23 +791,17 @@ async def get_configs(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 application = Application.builder().token(TOKEN).build()
 bot = telegram.Bot(token=TOKEN)
 
-def main() -> None:
-    # Command & Conversation & CallbackQuery Handlers will take place here.
-    start_handler = CommandHandler('start', start)
 
-    joined_handler = CallbackQueryHandler(joined_check, pattern="^joined$")
-
-    show_package_handler = MessageHandler(filters.Regex('^خرید سرویس 🛒$'), show_packages)
-
-    send_support_message_conv_handler = ConversationHandler(
+# Conversation Handlers:
+send_support_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
             SEND_SUPPORT_MESSAGE: [MessageHandler(filters.ALL & ~filters.Regex('^🔙 انصراف و بازگشت$'), send_support_message)]
         },
-        fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
+        fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$') & filters.Command, back_to_main_menu)]
     )
 
-    charge_wallet_conv_handler = ConversationHandler(
+charge_wallet_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^➕ افزایش موجودی$'), user_charge_wallet)],
         states={
             'PRICE': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, charge_get_price)],
@@ -820,7 +810,7 @@ def main() -> None:
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
 
-    brodcast_message_conv_handler = ConversationHandler(
+brodcast_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^🌐 پیام همگانی$'), brodcast)],
         states={
             'GET_PEOPLE': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, brodcast_get_people)],
@@ -829,7 +819,7 @@ def main() -> None:
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
 
-    user_manage_conv_handler = ConversationHandler(
+user_manage_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^👤 مدیریت کاربر$'), manage_user)],
         states={
             'GET_ID': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, show_manage_user_panel)],
@@ -841,7 +831,7 @@ def main() -> None:
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
 
-    bot_setting_conv_handler = ConversationHandler(
+bot_setting_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^⚙️ تنظیمات ربات$'), show_setting)],
         states={
             'GET_COMMAND': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, setting_get_command)],
@@ -855,7 +845,7 @@ def main() -> None:
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$') & filters.COMMAND, back_to_main_menu)]
     )
 
-    admin_send_configs_conv_handler = ConversationHandler(
+admin_send_configs_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^ارسال کانفیگ$'), admin_send_config)],
         states={
             'SET_PLAN': [MessageHandler(~filters.Regex('^🔙 انصراف و بازگشت$') & filters.TEXT, send_config_set_plan)],
@@ -863,6 +853,16 @@ def main() -> None:
         },
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$'), back_to_main_menu)]
     )
+
+
+def main() -> None:
+    # Command & Conversation & CallbackQuery Handlers will take place here.
+    start_handler = CommandHandler('start', start)
+
+    joined_handler = CallbackQueryHandler(joined_check, pattern="^joined$")
+
+    show_package_handler = MessageHandler(filters.Regex('^خرید سرویس 🛒$'), show_packages)
+
 
     show_info_message_handler = MessageHandler(filters.Regex('^ℹ️ اطلاعات حساب$'), show_info)
     show_user_list_handler = MessageHandler(filters.Regex('^🧾 لیست کاربران$'), show_user_list)
