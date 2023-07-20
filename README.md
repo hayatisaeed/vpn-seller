@@ -36,3 +36,4 @@ ADMIN sends configs to the bot, and bot sells them.
 * visit payment logs
 * get commission link, and for any bot start, get a specified price into wallet, and for any buy, get the percentage that admin sets for them
 
+
