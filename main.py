@@ -798,7 +798,7 @@ send_support_message_conv_handler = ConversationHandler(
         states={
             SEND_SUPPORT_MESSAGE: [MessageHandler(filters.TEXT & (~filters.Regex('^🔙 انصراف و بازگشت$')) & (~filters.COMMAND), send_support_message),
             MessageHandler(filters.PHOTO & (~filters.COMMAND) & (~filters.Regex('^🔙 انصراف و بازگشت$')), send_support_message),
-            CommandHandler(filters.COMMAND, back_to_main_menu)]
+            MessageHandler(filters.COMMAND, back_to_main_menu)]
         },
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$') & filters.COMMAND, back_to_main_menu)]
     )
