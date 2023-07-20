@@ -796,7 +796,7 @@ bot = telegram.Bot(token=TOKEN)
 send_support_message_conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^پیام به پشتیبانی 👨‍💻$'), get_support_message)],
         states={
-            SEND_SUPPORT_MESSAGE: [MessageHandler(filters.TEXT & (~filters.Regex('^🔙 انصراف و بازگشت$')) & (~filters.Command), send_support_message),
+            SEND_SUPPORT_MESSAGE: [MessageHandler(filters.TEXT & (~filters.Regex('^🔙 انصراف و بازگشت$')) & (~filters.COMMAND), send_support_message),
             MessageHandler(Filters.photo & (~Filters.command) & (~Filters.regex('^🔙 انصراف و بازگشت$')), handle_message)]
         },
         fallbacks=[MessageHandler(filters.Regex('^🔙 انصراف و بازگشت$') & filters.Command, back_to_main_menu)]
